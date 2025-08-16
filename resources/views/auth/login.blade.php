@@ -1,47 +1,69 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.grain-auth')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+@section('title', __('Login'))
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+@section('content')
+<div class="container-fluid pb-5">
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+	<div class="row justify-content-md-center">
+		<div class="card-wrapper col-12 col-md-4 mt-5">
+			<div class="brand text-center mb-3">
+				<a href="/"><img src="{{ asset('assets/imgs/logo.png') }}" style="height:75px;width:75px;"></a>
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h4 class="card-title">{{ __('Login') }}</h4>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+						<div class="form-group">
+							<label for="email">{{ __('E-Mail Address') }}</label>
+							<input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus>
+							@if ($errors->has('email'))
+								<span class="invalid-feedback" role="alert">
+									<strong>{{ $errors->first('email') }}</strong>
+								</span>
+							@endif
+						</div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+						<div class="form-group">
+							<label for="password">{{ __('Password') }}
+							</label>
+							<input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+							@if ($errors->has('password'))
+								<span class="invalid-feedback" role="alert">
+									<strong>{{ $errors->first('password') }}</strong>
+								</span>
+							@endif
+							{{-- @if (Route::has('password.request'))
+							<div class="text-right">
+								<a href="{{ route('password.request') }}" class="small">
+									{{ __('Forgot Your Password?') }}
+								</a>
+							</div>
+							@endif --}}
+						</div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+						<div class="form-group">
+							<div class="form-check position-relative mb-2">
+							  <input type="checkbox" class="form-check-input d-none" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
+							  <label class="checkbox checkbox-xxs form-check-label ml-1" for="remember"
+									 data-icon="&#xe936">{{ __('Remember Me') }}</label>
+							</div>
+						</div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+						<div class="form-group no-margin">
+							<button type="submit" class="btn btn-primary btn-block">
+								{{ __('Sign In') }}
+							</button>
+						</div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+					</form>
+				</div>
+			</div>
+			@include('auth.components.footer')
+		</div>
+	</div>
+
+</div>
+@endsection
