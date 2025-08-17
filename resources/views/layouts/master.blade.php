@@ -11,6 +11,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('graindashboard/css/graindashboard.css') }}" rel="stylesheet">
+
 </head>
 
   <body class="has-sidebar has-fixed-sidebar-and-header">
@@ -35,6 +36,7 @@
 
 	<script src="{{ asset('graindashboard/js/graindashboard.js') }}"></script>
 	<script src="{{ asset('graindashboard/js/graindashboard.vendor.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('scripts')
   </body>
 </html>
