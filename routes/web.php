@@ -12,6 +12,17 @@ use App\Http\Controllers\DashboardController;
 Route::get('/', function () {
     return view('index');
 });
+Route::get('/product-detail', function () {
+    return view('product-detail');
+});
+Route::get('/cart', function () {
+    return view('cart');
+});
+Route::get('/checkout', function () {
+    return view('checkout');
+});
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -42,7 +53,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     });
 
     // Categories Management
-      Route::prefix('categories')->controller(CategoryController::class)->group(function () {
+    Route::prefix('categories')->controller(CategoryController::class)->group(function () {
         Route::get('/', 'index')->name('category.index');
         Route::get('/create', 'create')->name('category.create');
         Route::post('/create', 'store')->name('category.store');
@@ -52,7 +63,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::delete('/{category}', 'destroy')->name('category.destroy');
     });
 
-     Route::prefix('products')->controller(ProductController::class)->group(function () {
+    Route::prefix('products')->controller(ProductController::class)->group(function () {
         Route::get('/', 'index')->name('product.index');
         Route::get('/create', 'create')->name('product.create');
         Route::post('/create', 'store')->name('product.store');

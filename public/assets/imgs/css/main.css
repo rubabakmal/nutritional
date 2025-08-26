@@ -1578,3 +1578,45 @@ body {
     font-size: 10px;
     color: white;
 }
+.nav-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.action-icon {
+    margin: 0 15px;
+    font-size: 14px;
+    position: relative;
+}
+
+.cart-icon {
+    position: relative;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #f56a00; /* Matching theme color */
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.most-loved .cart-icon {
+    position: absolute;
+    top: 48%;
+    left: 49%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 10px 15px;
+    border-radius: 50px;
+    font-size: 18px;
+    color: #35b4ad;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    text-decoration: none;
+}

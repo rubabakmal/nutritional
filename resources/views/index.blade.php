@@ -712,7 +712,7 @@
             </section>
         </div>
 
-        <section class="py-5">
+        <section class="py-5 most-loved">
             <div class="container text-center">
                 <h2 class="goal-title" style="padding-top: 2rem;
                 padding-bottom:2rem;">Perfect Gift for
