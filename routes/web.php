@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
@@ -12,17 +13,29 @@ use App\Http\Controllers\DashboardController;
 Route::get('/', function () {
     return view('index');
 });
-Route::get('/product-detail', function () {
-    return view('product-detail');
-});
-Route::get('/cart', function () {
-    return view('cart');
-});
+Route::get('cart', [CartController::class, 'cart'])->name('cart');
+
 Route::get('/checkout', function () {
     return view('checkout');
 });
+Route::get('/products/featured', [ProductController::class, 'featured'])->name('product.featured');
+Route::get('/product-detail/{product}', [ProductController::class, 'detail_show'])->name('product.detail');
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart/items', [CartController::class, 'getCartItems'])->name('cart.items');
+Route::post('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
 
 
+// API routes for cart (if you want to separate API and web routes)
+Route::prefix('api/cart')->name('api.cart.')->group(function () {
+    Route::get('/count', function () {
+        return response()->json(['count' => \App\Models\Cart::getCartCount()]);
+    });
+    Route::get('/total', function () {
+        return response()->json(['total' => \App\Models\Cart::getCartTotal()]);
+    });
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

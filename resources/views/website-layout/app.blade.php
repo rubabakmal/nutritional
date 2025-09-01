@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -153,6 +155,114 @@
     </script>
 
 
+    <script>
+        // Simple test function with detailed logging
+        function testAddToCart(productId) {
+            console.log('=== ADD TO CART TEST ===');
+            console.log('Product ID:', productId);
+            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'));
+            console.log('Session ID from Laravel:', '{{ session()->getId() }}');
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            if (!csrfToken) {
+                console.error('❌ CSRF Token not found!');
+                alert('CSRF Token missing! Check app.blade.php');
+                return;
+            }
+
+            const requestData = {
+                product_id: productId,
+                quantity: 1
+            };
+
+            console.log('Request Data:', requestData);
+            console.log('Making request to:', '/cart/add');
+
+            fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    console.log('Response Status:', response.status);
+                    console.log('Response Headers:', response.headers);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('✅ Response Data:', data);
+
+                    if (data.success) {
+                        alert('✅ Product added to cart! Check console for details.');
+                        console.log('Cart Count:', data.cart_count);
+                        console.log('Cart Total:', data.cart_total);
+
+                        // Update badge if exists
+                        const badge = document.getElementById('cartBadge');
+                        if (badge) {
+                            badge.textContent = data.cart_count;
+                        }
+                    } else {
+                        console.error('❌ Failed to add to cart:', data.message);
+                        alert('❌ Failed: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Network Error:', error);
+                    alert('❌ Network Error: ' + error.message);
+                });
+        }
+
+        // Test cart endpoints on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== TESTING CART ENDPOINTS ===');
+
+            // Test cart items endpoint
+            fetch('/cart/items')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('📦 Cart Items Response:', data);
+                })
+                .catch(error => {
+                    console.error('❌ Cart Items Error:', error);
+                });
+
+            // Test debug endpoint if available
+            fetch('/debug-cart')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('🔍 Debug Cart Response:', data);
+                })
+                .catch(error => {
+                    console.log('ℹ️ Debug endpoint not available (normal)');
+                });
+        });
+    </script>
+    <script>
+        // Debug cart functionality
+        console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'));
+        console.log('Session ID:', '{{ session()->getId() }}');
+
+        // Test cart API endpoint
+        fetch('/cart/items', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cart Items Response:', data);
+            })
+            .catch(error => {
+                console.error('Cart API Error:', error);
+            });
+    </script>
 </body>
 
 </html>

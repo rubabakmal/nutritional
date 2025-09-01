@@ -576,7 +576,7 @@
         </section>
 
 
-        <div class="most-loved-wrap">
+        {{-- <div class="most-loved-wrap">
             <section class="py-5">
                 <div class="container text-center">
                     <h2 class="goal-title" style="padding-top: 2rem; padding-bottom:2rem;">Our Most-Loved</h2>
@@ -710,7 +710,66 @@
                     </div>
                 </div>
             </section>
+        </div> --}}
+
+        @php
+            use App\Models\Product;
+            // Fetch products from database
+            $featuredProducts = Product::with('category')->where('status', 'active')->latest()->limit(10)->get();
+        @endphp
+
+        <div class="most-loved-wrap">
+            <section class="py-5">
+                <div class="container text-center">
+                    <h2 class="goal-title" style="padding-top: 2rem; padding-bottom:2rem;">Our Most-Loved</h2>
+                    <div class="mx-auto position-relative" style="max-width: 1100px;">
+                        <div class="owl-carousel owl-theme most-loved-carousel">
+
+                            @if ($featuredProducts->count() > 0)
+                                @foreach ($featuredProducts as $product)
+                                    <div class="item">
+                                        <div class="loved-card-wrapper">
+                                            <!-- Product Image - Clickable with ID -->
+                                            <a href="{{ route('product.detail', $product->id) }}" class="product-link">
+                                                <div class="loved-card position-relative">
+                                                    <img src="{{ $product->image ? Storage::url($product->image) : asset('assets/imgs/default-product.jpg') }}"
+                                                        alt="{{ $product->name }}" class="img-fluid w-100">
+                                                    <div class="loved-overlay">
+                                                        <!-- Cart Button - Stops propagation -->
+                                                        <button type="button" class="loved-icon btn btn-primary"
+                                                            onclick="event.preventDefault(); event.stopPropagation(); testAddToCart({{ $product->id }})"
+                                                            data-product-id="{{ $product->id }}"
+                                                            data-product-name="{{ $product->name }}"
+                                                            data-product-price="{{ $product->price }}">
+                                                            <i class="fas fa-shopping-cart"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                            <!-- Product Info - Clickable with ID -->
+                                            <a href="{{ route('product.detail', $product->id) }}"
+                                                class="product-info-link">
+                                                <h6 class="mt-3 mb-1">
+                                                    {{ strtoupper($product->category->name ?? 'PRODUCT') }}</h6>
+                                                <p class="text-muted mb-0">{{ $product->name }}</p>
+                                                <small class="text-muted">From AED
+                                                    {{ number_format($product->price, 2) }}</small>
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="alert alert-warning">
+                                    <strong>No products found!</strong> Please add some products to the database.
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+
 
         <section class="py-5 most-loved">
             <div class="container text-center">

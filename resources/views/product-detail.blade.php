@@ -8,7 +8,7 @@
     .product-detail-content {
         display: flex;
         justify-content: space-between;
-        flex-wrap: wrap; /* Ensures the content wraps on smaller screens */
+        flex-wrap: wrap;
     }
 
     .carousel-container {
@@ -106,7 +106,6 @@
         border: 2px solid #000;
     }
 
-    /* 5-Star Rating */
     .rating {
         display: flex;
         align-items: center;
@@ -124,8 +123,47 @@
         margin-right: 2px;
     }
 
+    .category-tag {
+        background-color: #f8f4ef;
+        color: #333;
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: inline-block;
+        text-transform: uppercase;
+    }
+
+    .stock-info {
+        margin: 10px 0;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .in-stock {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .low-stock {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+
+    .out-of-stock {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
+
         .carousel-container,
         .product-info {
             width: 100%;
@@ -157,77 +195,248 @@
                 <div class="carousel-container">
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="{{ asset('assets/imgs/balkees-card.jpg') }}" class="d-block w-100" alt="Product 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ asset('assets/imgs/cart-img3.jpg') }}" class="d-block w-100" alt="Product 2">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="{{ asset('assets/imgs/balkees-card.jpg') }}" class="d-block w-100" alt="Product 3">
-                            </div>
+                            @if ($product->image)
+                                <!-- Main Product Image -->
+                                <div class="carousel-item active">
+                                    <img src="{{ Storage::url($product->image) }}" class="d-block w-100"
+                                        alt="{{ $product->name }}">
+                                </div>
+                            @endif
+
+                            @if ($product->gallery && is_array($product->gallery))
+                                <!-- Gallery Images -->
+                                @foreach ($product->gallery as $index => $galleryImage)
+                                    <div class="carousel-item {{ !$product->image && $index == 0 ? 'active' : '' }}">
+                                        <img src="{{ Storage::url($galleryImage) }}" class="d-block w-100"
+                                            alt="{{ $product->name }} - Gallery {{ $index + 1 }}">
+                                    </div>
+                                @endforeach
+                            @endif
+
+                            @if (!$product->image && (!$product->gallery || empty($product->gallery)))
+                                <!-- Fallback Image -->
+                                <div class="carousel-item active">
+                                    <img src="{{ asset('assets/imgs/default-product.jpg') }}" class="d-block w-100"
+                                        alt="{{ $product->name }}">
+                                </div>
+                            @endif
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+
+                        @if (($product->image ? 1 : 0) + ($product->gallery ? count($product->gallery) : 0) > 1)
+                            <!-- Carousel Controls (only show if more than 1 image) -->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        @endif
                     </div>
 
                     <!-- Thumbnails Below -->
-                    <div class="thumbs">
-                        <img src="{{ asset('assets/imgs/balkees-card.jpg') }}" alt="Thumbnail 1" data-bs-target="#productCarousel" data-bs-slide-to="0">
-                        <img src="{{ asset('assets/imgs/cart-img3.jpg') }}" alt="Thumbnail 2" data-bs-target="#productCarousel" data-bs-slide-to="1">
-                        <img src="{{ asset('assets/imgs/balkees-card.jpg') }}" alt="Thumbnail 3" data-bs-target="#productCarousel" data-bs-slide-to="2">
-                    </div>
+                    @if (($product->image ? 1 : 0) + ($product->gallery ? count($product->gallery) : 0) > 1)
+                        <div class="thumbs">
+                            @if ($product->image)
+                                <img src="{{ Storage::url($product->image) }}" alt="Main Image"
+                                    data-bs-target="#productCarousel" data-bs-slide-to="0" class="active">
+                            @endif
+
+                            @if ($product->gallery && is_array($product->gallery))
+                                @foreach ($product->gallery as $index => $galleryImage)
+                                    <img src="{{ Storage::url($galleryImage) }}" alt="Gallery {{ $index + 1 }}"
+                                        data-bs-target="#productCarousel"
+                                        data-bs-slide-to="{{ $product->image ? $index + 1 : $index }}">
+                                @endforeach
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Right Side: Product Info -->
                 <div class="product-info">
-                    <h2>Black Seed Fusion</h2>
+                    <!-- Category Tag -->
+                    @if ($product->category)
+                        <span class="category-tag">{{ $product->category->name }}</span>
+                    @endif
+
+                    <!-- Product Name -->
+                    <h2>{{ $product->name }}</h2>
+
+                    <!-- Rating (Static for now) -->
                     <div class="rating">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                    </div>
-                    <div class="price">AED 304.00</div>
-                    <div class="description">
-                        Black Seed is a traditional herb used for centuries in the Middle East and Asia to promote health and general well-being. Combined with the natural enzymes in our raw, unpasteurized honey makes a potent combination full of immune-boosting properties.
-                        <br><br>
-                        Ingredients: 100% Raw Sidr Do'ani & Black Seed
-                        <br><br>
-                        Storage: Store at room temperature. If crystallization occurs, place jar in warm water.
-                        <br><br>
-                        Packaging: All Balqees honey is packaged in recyclable glass jars.
-                        <br><br>
-                        Country of origin: Yemen.
-                        <br><br>
-                        Raw Honey is a natural product, therefore the color and texture may vary depending on the season and level of crystallization.
+                        <span>({{ rand(50, 200) }} reviews)</span>
                     </div>
 
+                    <!-- Price -->
+                    <div class="price">AED {{ number_format($product->price, 2) }}</div>
+
+                    <!-- Stock Information -->
+                    @if ($product->quantity > 10)
+                        <div class="stock-info in-stock">✅ In Stock ({{ $product->quantity }} available)</div>
+                    @elseif($product->quantity > 0)
+                        <div class="stock-info low-stock">⚠️ Only {{ $product->quantity }} left in stock</div>
+                    @else
+                        <div class="stock-info out-of-stock">❌ Out of Stock</div>
+                    @endif
+
+                    <!-- Description -->
+                    <div class="description">
+                        {{ $product->description ?? 'This premium honey product is carefully sourced and processed to maintain its natural qualities and health benefits. Perfect for daily consumption or as a thoughtful gift.' }}
+                        <br><br>
+                        <strong>SKU:</strong> {{ $product->sku }}
+                        <br><br>
+                        <strong>Status:</strong> {{ ucfirst($product->status) }}
+                        @if ($product->is_featured)
+                            <br><strong>Featured Product</strong> ⭐
+                        @endif
+                    </div>
+
+                    <!-- Quantity Selection -->
                     <div class="quantity-select">
                         <label for="quantity">Quantity:</label>
                         <select id="quantity" name="quantity">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
+                            @for ($i = 1; $i <= min(10, $product->quantity); $i++)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
                         </select>
                     </div>
 
+                    <!-- Add to Cart Button -->
                     <div class="text-center">
-                        <a href="#" class="shop-now-btn quize-btn add-to-cart-btn">
-                            Add to Cart
-                            <span class="btn-arrow">→</span>
-                        </a>
+                        @if ($product->quantity > 0)
+                            <button class="shop-now-btn quize-btn add-to-cart-btn"
+                                onclick="addToCartFromDetail({{ $product->id }})" id="addToCartBtn">
+                                Add to Cart
+                                <span class="btn-arrow">→</span>
+                            </button>
+                        @else
+                            <button class="shop-now-btn add-to-cart-btn" disabled
+                                style="background-color: #ccc; cursor: not-allowed;">
+                                Out of Stock
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Add to cart from product detail page
+        function addToCartFromDetail(productId) {
+            const quantity = document.getElementById('quantity').value;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const addToCartBtn = document.getElementById('addToCartBtn');
+
+            if (!csrfToken) {
+                alert('CSRF Token missing!');
+                return;
+            }
+
+            // Show loading state
+            const originalContent = addToCartBtn.innerHTML;
+            addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            addToCartBtn.disabled = true;
+
+            fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: parseInt(quantity)
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Success feedback
+                        addToCartBtn.innerHTML = '✅ Added to Cart!';
+                        addToCartBtn.style.backgroundColor = '#28a745';
+
+                        // Update cart badge if exists
+                        const badge = document.getElementById('cartBadge');
+                        if (badge) {
+                            badge.textContent = data.cart_count;
+                        }
+
+                        // Show success message
+                        showNotification('Product added to cart successfully!', 'success');
+
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            addToCartBtn.innerHTML = originalContent;
+                            addToCartBtn.style.backgroundColor = '';
+                            addToCartBtn.disabled = false;
+                        }, 2000);
+                    } else {
+                        // Error feedback
+                        addToCartBtn.innerHTML = originalContent;
+                        addToCartBtn.disabled = false;
+                        showNotification(data.message || 'Error adding to cart', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addToCartBtn.innerHTML = originalContent;
+                    addToCartBtn.disabled = false;
+                    showNotification('Network error occurred', 'error');
+                });
+        }
+
+        // Notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                padding: 15px 20px;
+                border-radius: 5px;
+                color: white;
+                font-weight: bold;
+                background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Thumbnail click functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.thumbs img');
+            thumbnails.forEach((thumb, index) => {
+                thumb.addEventListener('click', function() {
+                    // Remove active class from all thumbnails
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked thumbnail
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
 @endsection

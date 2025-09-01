@@ -20,6 +20,37 @@ class ProductController extends Controller
     }
 
     /**
+     * Display featured products for homepage
+     */
+    public function featured()
+    {
+
+        $featuredProducts = Product::with('category')
+            ->where('is_featured', true)
+            ->where('status', 'active')
+            ->latest()
+            ->limit(8)
+            ->get();
+
+        return view('index', compact('featuredProducts'));
+    }
+
+    /**
+     * Get most loved products for homepage section
+     */
+    public function getMostLoved()
+    {
+        $mostLovedProducts = Product::with('category')
+            ->where('status', 'active')
+            ->where('is_featured', true)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return $mostLovedProducts;
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -49,15 +80,12 @@ class ProductController extends Controller
         $validated['status'] = $request->input('status', 'active');
         $validated['is_featured'] = $request->has('is_featured');
 
-        // Generate SKU if not provided
         $validated['sku'] = 'PRD-' . strtoupper(Str::random(8));
 
-        // Handle main image upload
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-        // Handle gallery images upload
         if ($request->hasFile('gallery')) {
             $galleryPaths = [];
             foreach ($request->file('gallery') as $galleryImage) {
@@ -104,7 +132,7 @@ class ProductController extends Controller
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'in:active,inactive,out_of_stock',
             'is_featured' => 'boolean',
-            'removed_gallery_images' => 'nullable|string' // Add validation for removed images
+            'removed_gallery_images' => 'nullable|string'
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -119,41 +147,31 @@ class ProductController extends Controller
             }
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
-
-        // Handle gallery images
         $currentGallery = $product->gallery ?? [];
         $updatedGallery = $currentGallery;
 
-        // Handle removed gallery images
         if ($request->has('removed_gallery_images') && !empty($request->input('removed_gallery_images'))) {
             $removedImages = json_decode($request->input('removed_gallery_images'), true);
 
             if (is_array($removedImages)) {
                 foreach ($removedImages as $imageToRemove) {
-                    // Remove from storage
                     Storage::disk('public')->delete($imageToRemove);
-
-                    // Remove from gallery array
                     $updatedGallery = array_values(array_diff($updatedGallery, [$imageToRemove]));
                 }
             }
         }
 
-        // Handle new gallery images upload
+
         if ($request->hasFile('gallery')) {
             $newGalleryPaths = [];
             foreach ($request->file('gallery') as $galleryImage) {
                 $newGalleryPaths[] = $galleryImage->store('products/gallery', 'public');
             }
 
-            // Merge existing (after removal) with new images
             $updatedGallery = array_merge($updatedGallery, $newGalleryPaths);
         }
 
-        // Update the gallery
         $validated['gallery'] = $updatedGallery;
-
-        // Remove the removed_gallery_images from validated data as it's not a model attribute
         unset($validated['removed_gallery_images']);
 
         $product->update($validated);
@@ -181,5 +199,33 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('product.index')->with('success', 'Product deleted successfully.');
+    }
+    public function detail_show($id)
+    {
+        $product = Product::with('category')->find($id);
+
+        if (!$product) {
+            return redirect()->route('homepage')->with('error', 'Product not found');
+        }
+
+        $relatedProducts = Product::with('category')
+            ->where('status', 'active')
+            ->where('id', '!=', $id) // Exclude current product
+            ->where('category_id', $product->category_id) // Same category
+            ->limit(4)
+            ->get();
+
+        if ($relatedProducts->count() < 4) {
+            $additionalProducts = Product::with('category')
+                ->where('status', 'active')
+                ->where('id', '!=', $id)
+                ->whereNotIn('id', $relatedProducts->pluck('id'))
+                ->limit(4 - $relatedProducts->count())
+                ->get();
+
+            $relatedProducts = $relatedProducts->merge($additionalProducts);
+        }
+
+        return view('product-detail', compact('product', 'relatedProducts'));
     }
 }
