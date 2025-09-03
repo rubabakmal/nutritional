@@ -229,8 +229,47 @@ class CartController extends Controller
             'cart_total' => Cart::getCartTotal()
         ]);
     }
-    public function cart()
-    {
-        return view('cart');
+   public function cart()
+{
+    try {
+        $sessionId = session()->getId();
+
+        // Get cart items from database
+        $cartItems = Cart::getCartItems();
+        $cartCount = Cart::getCartCount();
+        $cartTotal = Cart::getCartTotal();
+
+        // Format cart items for the view
+        $formattedItems = $cartItems->map(function ($item) {
+            return [
+                'id' => $item->product_id,
+                'name' => $item->product->name,
+                'price' => floatval($item->price),
+                'quantity' => $item->quantity,
+                'total' => floatval($item->price) * $item->quantity,
+                'image' => $item->product->image ? asset('storage/' . $item->product->image) : asset('assets/imgs/default-product.jpg'),
+                'category' => $item->product->category->name ?? 'Product',
+                'size' => $item->product->size ?? '400g' // assuming you have size field
+            ];
+        });
+
+        // Calculate shipping
+        $shipping = $cartTotal >= 500 ? 0 : 25;
+        $finalTotal = $cartTotal + $shipping;
+
+        return view('cart', compact('formattedItems', 'cartCount', 'cartTotal', 'shipping', 'finalTotal'));
+
+    } catch (\Exception $e) {
+        Log::error('Error loading cart page: ' . $e->getMessage());
+
+        // Return empty cart view if error
+        return view('cart', [
+            'formattedItems' => collect([]),
+            'cartCount' => 0,
+            'cartTotal' => 0,
+            'shipping' => 0,
+            'finalTotal' => 0
+        ]);
     }
+}
 }

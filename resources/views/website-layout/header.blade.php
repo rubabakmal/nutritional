@@ -635,7 +635,7 @@
 
         // Render footer
         cartFooter.innerHTML = `
-       
+
 
                  <a href="{{ route('cart') }}" class="cart-text">
                        <span>All Cart Products</span>
@@ -644,12 +644,12 @@
                 <div class="progress-bar" style="width: ${freeShippingProgress}%"></div>
             </div>
             <div class="progress-text">
-                ${amountToFreeShipping > 0 
+                ${amountToFreeShipping > 0
                     ? `You are AED ${amountToFreeShipping.toFixed(2)} away from FREE SHIPPING!`
                     : 'You qualify for FREE SHIPPING!'
                 }
             </div>
-            
+
             <div class="cart-summary">
                 <div class="summary-row">
                     <span>Subtotal (${count} item${count !== 1 ? 's' : ''})</span>
@@ -664,13 +664,13 @@
                     <span>AED ${finalTotal.toFixed(2)}</span>
                 </div>
             </div>
-            
+
             <div class="shipping-note">
                 Your cart is reserved for 10 Minutes. The stock is limited! Finalize your order now
             </div>
-            
+
             <div class="text-center">
-                <a href="#" class="shop-now-btn checkout">
+                <a href="{{ route('checkout') }}" class="shop-now-btn checkout">
                     Checkout
                     <span class="btn-arrow">→</span>
                 </a>

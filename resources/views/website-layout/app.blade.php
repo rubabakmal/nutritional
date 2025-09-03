@@ -231,15 +231,15 @@
                     console.error('❌ Cart Items Error:', error);
                 });
 
-            // Test debug endpoint if available
-            fetch('/debug-cart')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('🔍 Debug Cart Response:', data);
-                })
-                .catch(error => {
-                    console.log('ℹ️ Debug endpoint not available (normal)');
-                });
+            // // Test debug endpoint if available
+            // fetch('/debug-cart')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         console.log('🔍 Debug Cart Response:', data);
+            //     })
+            //     .catch(error => {
+            //         console.log('ℹ️ Debug endpoint not available (normal)');
+            //     });
         });
     </script>
     <script>

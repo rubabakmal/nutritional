@@ -1,6 +1,9 @@
 @extends('website-layout.app')
 
 @section('content')
+    <!-- Add CSRF token meta tag -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <style>
         * {
             margin: 0;
@@ -30,15 +33,15 @@
             font-family: "Red Hat Display", sans-serif;
         }
 
-        /* Cart Container */
-        .cart-container {
+        /* Main Cart Container */
+        .main-cart-container {
             max-width: 1200px;
             margin: 60px auto;
             padding: 0 20px;
         }
 
-        /* Cart Table */
-        .cart-table {
+        /* Main Cart Table */
+        .main-cart-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
@@ -49,11 +52,11 @@
             overflow: hidden;
         }
 
-        .cart-table thead {
+        .main-cart-table thead {
             background-color: #f8f9fa;
         }
 
-        .cart-table th {
+        .main-cart-table th {
             padding: 20px;
             text-align: left;
             font-weight: 600;
@@ -63,19 +66,19 @@
             letter-spacing: 0.5px;
         }
 
-        .cart-table td {
+        .main-cart-table td {
             padding: 30px 20px;
             border-bottom: 1px solid #eee;
             vertical-align: middle;
         }
 
-        .product-info {
+        .main-product-info {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .product-image {
+        .main-product-image {
             width: 80px;
             height: 80px;
             background: #f5f5f5;
@@ -86,31 +89,31 @@
             overflow: hidden;
         }
 
-        .product-image img {
+        .main-product-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .product-details h3 {
+        .main-product-details h3 {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 5px;
             color: #333;
         }
 
-        .product-size {
+        .main-product-size {
             font-size: 14px;
             color: #666;
         }
 
-        .price {
+        .main-price {
             font-size: 16px;
             font-weight: 600;
             color: #333;
         }
 
-        .quantity-controls {
+        .main-quantity-controls {
             display: flex;
             align-items: center;
             gap: 0;
@@ -120,7 +123,7 @@
             max-width: 120px;
         }
 
-        .quantity-btn {
+        .main-quantity-btn {
             background: white;
             border: none;
             padding: 8px 12px;
@@ -130,11 +133,11 @@
             transition: background-color 0.3s;
         }
 
-        .quantity-btn:hover {
+        .main-quantity-btn:hover {
             background-color: #f5f5f5;
         }
 
-        .quantity-input {
+        .main-quantity-input {
             border: none;
             width: 50px;
             text-align: center;
@@ -143,44 +146,45 @@
             background: white;
         }
 
-        .total-price {
+        .main-total-price {
             font-size: 16px;
             font-weight: 600;
             color: #333;
         }
 
-        .remove-btn {
-            background: none;
+        .main-remove-btn {
+            background: #e74c3c;
             border: none;
-            color: #666;
+            color: white;
             cursor: pointer;
-            font-size: 16px;
-            padding: 5px;
-            margin-right: 10px;
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
         }
 
-        .remove-btn:hover {
-            color: #e74c3c;
+        .main-remove-btn:hover {
+            background-color: #c0392b;
         }
 
-        /* Cart Footer */
-        .cart-footer {
+        /* Main Cart Footer */
+        .main-cart-footer {
             display: flex;
             justify-content: space-between;
             gap: 40px;
         }
 
-        .order-note {
+        .main-order-note {
             flex: 1;
         }
 
-        .order-note h3 {
+        .main-order-note h3 {
             font-size: 16px;
             margin-bottom: 15px;
             color: #333;
         }
 
-        .note-textarea {
+        .main-note-textarea {
             width: 100%;
             min-height: 120px;
             padding: 15px;
@@ -191,11 +195,11 @@
             font-family: inherit;
         }
 
-        .note-textarea::placeholder {
+        .main-note-textarea::placeholder {
             color: #999;
         }
 
-        .cart-summary {
+        .main-cart-summary {
             min-width: 300px;
             background: white;
             padding: 30px;
@@ -204,14 +208,14 @@
             height: fit-content;
         }
 
-        .summary-row {
+        .main-summary-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 15px;
             font-size: 16px;
         }
 
-        .summary-row.subtotal {
+        .main-summary-row.subtotal {
             font-size: 18px;
             font-weight: 600;
             padding-top: 15px;
@@ -219,14 +223,14 @@
             margin-top: 20px;
         }
 
-        .shipping-note {
+        .main-shipping-note {
             font-size: 13px;
             color: #666;
             margin: 15px 0;
             text-align: center;
         }
 
-        .checkout-btn {
+        .main-checkout-btn {
             width: 100%;
             background-color: #35B4AD;
             color: white;
@@ -239,98 +243,117 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: background-color 0.3s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
         }
 
-        .checkout-btn:hover {
+        .main-checkout-btn:hover {
             background-color: #2a9089;
         }
 
-        /* Discount Banner */
-        .discount-banner {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: linear-gradient(45deg, #35B4AD, #2a9089);
+        .main-empty-cart {
+            text-align: center;
+            padding: 100px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-empty-cart i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .main-empty-cart h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .main-empty-cart p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .main-shop-now-btn {
+            display: inline-block;
+            background-color: #35B4AD;
             color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 14px;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 6px;
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(53, 180, 173, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background-color 0.3s;
         }
 
-        .discount-banner:hover {
-            transform: translateY(-2px);
+        .main-shop-now-btn:hover {
+            background-color: #2a9089;
         }
 
-        .discount-banner::before {
-            content: "🎁";
-            margin-right: 8px;
-        }
-
-        /* Mobile Responsive */
+        /* Responsive design */
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 32px;
             }
 
-            .cart-table {
+            .main-cart-table {
                 font-size: 14px;
             }
 
-            .cart-table th,
-            .cart-table td {
+            .main-cart-table th,
+            .main-cart-table td {
                 padding: 15px 10px;
             }
 
-            .product-info {
+            .main-product-info {
                 flex-direction: column;
                 text-align: center;
             }
 
-            .cart-footer {
+            .main-cart-footer {
                 flex-direction: column;
                 gap: 30px;
             }
 
-            .cart-summary {
+            .main-cart-summary {
                 min-width: auto;
             }
         }
 
         @media (max-width: 480px) {
-
-            .cart-table,
-            .cart-table thead,
-            .cart-table tbody,
-            .cart-table th,
-            .cart-table td,
-            .cart-table tr {
+            .main-cart-table,
+            .main-cart-table thead,
+            .main-cart-table tbody,
+            .main-cart-table th,
+            .main-cart-table td,
+            .main-cart-table tr {
                 display: block;
             }
 
-            .cart-table thead tr {
+            .main-cart-table thead tr {
                 position: absolute;
                 top: -9999px;
                 left: -9999px;
             }
 
-            .cart-table tr {
+            .main-cart-table tr {
                 border: 1px solid #ccc;
                 margin-bottom: 10px;
                 padding: 15px;
                 border-radius: 8px;
             }
 
-            .cart-table td {
+            .main-cart-table td {
                 border: none;
                 position: relative;
                 padding: 10px 0;
             }
 
-            .cart-table td:before {
+            .main-cart-table td:before {
                 content: attr(data-label) ": ";
                 font-weight: bold;
                 color: #666;
@@ -343,153 +366,218 @@
         <h1 class="hero-title">Shopping Cart</h1>
     </section>
 
-    <!-- Cart Container -->
-    <div class="cart-container">
-        <table class="cart-table">
-            <thead>
-                <tr>
-                    <th>PRODUCT</th>
-                    <th>PRICE</th>
-                    <th>QUANTITY</th>
-                    <th>TOTAL</th>
-                </tr>
-            </thead>
-            <tbody id="cartTableBody">
-                <tr>
-                    <td data-label="Product">
-                        <div class="product-info">
-                            <div class="product-image">
-                                <img src="{{ asset('assets/imgs/balkees-img1.webp') }}" alt="Lemon Zest & Ginger Fusion">
-                            </div>
-                            <div class="product-details">
-                                <h3>Lemon Zest & Ginger Fusion</h3>
-                                <p class="product-size">Size: 400g</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td data-label="Price">
-                        <div class="price">Dhs. 304.00</div>
-                    </td>
-                    <td data-label="Quantity">
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" onclick="updateQuantity(1, 0)">−</button>
-                            <input type="number" class="quantity-input" value="1"
-                                onchange="updateQuantity(1, this.value)" min="1">
-                            <button class="quantity-btn" onclick="updateQuantity(1, 2)">+</button>
-                        </div>
-                    </td>
-                    <td data-label="Total">
+    <!-- Main Cart Container -->
+    <div class="main-cart-container">
+        @if($formattedItems->count() > 0)
+            <table class="main-cart-table">
+                <thead>
+                    <tr>
+                        <th>PRODUCT</th>
+                        <th>PRICE</th>
+                        <th>QUANTITY</th>
+                        <th>TOTAL</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="mainCartTableBody">
+                    @foreach($formattedItems as $item)
+                        <tr data-product-id="{{ $item['id'] }}">
+                            <td data-label="Product">
+                                <div class="main-product-info">
+                                    <div class="main-product-image">
+                                        <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}"
+                                             onerror="this.src='{{ asset('assets/imgs/default-product.jpg') }}'">
+                                    </div>
+                                    <div class="main-product-details">
+                                        <h3>{{ $item['name'] }}</h3>
+                                        <p class="main-product-size">Size: {{ $item['size'] ?? '400g' }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Price">
+                                <div class="main-price">AED {{ number_format($item['price'], 2) }}</div>
+                            </td>
+                            <td data-label="Quantity">
+                                <div class="main-quantity-controls">
+                                    <button type="button" class="main-quantity-btn decrease-btn" data-id="{{ $item['id'] }}">−</button>
+                                    <input type="number" class="main-quantity-input" value="{{ $item['quantity'] }}"
+                                           data-id="{{ $item['id'] }}" min="1" max="10">
+                                    <button type="button" class="main-quantity-btn increase-btn" data-id="{{ $item['id'] }}">+</button>
+                                </div>
+                            </td>
+                            <td data-label="Total">
+                                <div class="main-total-price" data-price="{{ $item['price'] }}">AED {{ number_format($item['total'], 2) }}</div>
+                            </td>
+                            <td data-label="Action">
+                                <button type="button" class="main-remove-btn" data-id="{{ $item['id'] }}">Remove</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
-                        <div class="total-price">Dhs. 304.00</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td data-label="Product">
-                        <div class="product-info">
-                            <div class="product-image">
-                                <img src="{{ asset('assets/imgs/balkees-img2.webp') }}" alt="Cinnamon & Sesame Seed Fusion">
-                            </div>
-                            <div class="product-details">
-                                <h3>Cinnamon & Sesame Seed Fusion</h3>
-                                <p class="product-size">Size: 400g</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td data-label="Price">
-                        <div class="price">Dhs. 304.00</div>
-                    </td>
-                    <td data-label="Quantity">
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" onclick="updateQuantity(2, 0)">−</button>
-                            <input type="number" class="quantity-input" value="1"
-                                onchange="updateQuantity(2, this.value)" min="1">
-                            <button class="quantity-btn" onclick="updateQuantity(2, 2)">+</button>
-                        </div>
-                    </td>
-                    <td data-label="Total">
-
-                        <div class="total-price">Dhs. 304.00</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="cart-footer">
-            <div class="order-note">
-                <h3>Add Order Note</h3>
-                <textarea class="note-textarea" placeholder="How can we help you?"></textarea>
-            </div>
-
-            <div class="cart-summary">
-                <div class="summary-row subtotal">
-                    <span>SUBTOTAL:</span>
-                    <span id="subtotalAmount">DHS. 608.0</span>
+            <div class="main-cart-footer">
+                <div class="main-order-note">
+                    <h3>Add Order Note</h3>
+                    <textarea class="main-note-textarea" placeholder="How can we help you?"></textarea>
                 </div>
-                <p class="shipping-note">Taxes and shipping calculated at checkout</p>
-                <div class="text-center">
-                    <a href="#" class="shop-now-btn">
-                        Checkout
-                        <span class="btn-arrow">→</span>
-                    </a>
+
+                <div class="main-cart-summary">
+                    <div class="main-summary-row">
+                        <span>Subtotal ({{ $cartCount }} item{{ $cartCount != 1 ? 's' : '' }}):</span>
+                        <span id="subtotal-amount">AED {{ number_format($cartTotal, 2) }}</span>
+                    </div>
+                    <div class="main-summary-row">
+                        <span>Shipping:</span>
+                        <span id="shipping-amount">{{ $shipping == 0 ? 'FREE' : 'AED ' . number_format($shipping, 2) }}</span>
+                    </div>
+                    <div class="main-summary-row subtotal">
+                        <span>TOTAL:</span>
+                        <span id="final-total">AED {{ number_format($finalTotal, 2) }}</span>
+                    </div>
+                    <p class="main-shipping-note" id="shipping-note">
+                        @if($shipping > 0)
+                            Add AED {{ number_format(500 - $cartTotal, 2) }} more for free shipping!
+                        @else
+                            You qualify for FREE shipping!
+                        @endif
+                    </p>
+                    <div class="text-center">
+                        <a href="{{ route('checkout') }}" class="main-checkout-btn">
+                            Checkout
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Discount Banner -->
-    <div class="discount-banner">
-        Claim AED 50 Off 👑
+        @else
+            <div class="main-empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Your cart is empty</h3>
+                <p>Start shopping to add items to your cart</p>
+                <a href="{{ url('/') }}" class="main-shop-now-btn">
+                    Continue Shopping
+                </a>
+            </div>
+        @endif
     </div>
 
     <script>
-        function updateQuantity(itemId, newQuantity) {
-            newQuantity = parseInt(newQuantity);
-            if (newQuantity < 1) {
-                removeItem(itemId);
-                return;
-            }
+        console.log('Main cart script loading...');
 
-            // Update the input field
-            const row = document.querySelector(`input[onchange*="${itemId}"]`);
-            if (row) {
-                row.value = newQuantity;
-                // Update total price for this row
-                const totalElement = row.closest('tr').querySelector('.total-price');
-                totalElement.textContent = `Dhs. ${(304.00 * newQuantity).toFixed(2)}`;
-                updateSummary();
-            }
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up main cart functionality');
 
-        function removeItem(itemId) {
-            const row = document.querySelector(`button[onclick*="removeItem(${itemId})"]`).closest('tr');
-            if (row) {
-                row.remove();
-                updateSummary();
-            }
-        }
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            console.log('CSRF token found:', token ? 'Yes' : 'No');
 
-        function editItem(itemId) {
-            alert('Edit functionality - opens product edit modal');
-        }
-
-        function updateSummary() {
-            let subtotal = 0;
-            const rows = document.querySelectorAll('#cartTableBody tr');
-
-            rows.forEach(row => {
-                const quantityInput = row.querySelector('.quantity-input');
-                if (quantityInput) {
-                    const quantity = parseInt(quantityInput.value);
-                    subtotal += (304.00 * quantity);
-                }
+            // Update selectors to use main- prefixed classes
+            document.querySelectorAll('.increase-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    const input = document.querySelector(`.main-quantity-input[data-id="${productId}"]`);
+                    const newQty = parseInt(input.value) + 1;
+                    console.log('Increasing quantity for product', productId, 'to', newQty);
+                    updateCartQuantity(productId, newQty);
+                });
             });
 
-            document.getElementById('subtotalAmount').textContent = `DHS. ${subtotal.toFixed(1)}`;
-        }
+            document.querySelectorAll('.decrease-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    const input = document.querySelector(`.main-quantity-input[data-id="${productId}"]`);
+                    const newQty = parseInt(input.value) - 1;
+                    console.log('Decreasing quantity for product', productId, 'to', newQty);
 
-        // Checkout functionality
-        document.querySelector('.checkout-btn').addEventListener('click', function() {
-            window.location.href = '/checkout';
+                    if (newQty < 1) {
+                        removeFromCart(productId);
+                    } else {
+                        updateCartQuantity(productId, newQty);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.main-remove-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    console.log('Removing product', productId);
+                    if (confirm('Remove this item from your cart?')) {
+                        removeFromCart(productId);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.main-quantity-input').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    const productId = this.getAttribute('data-id');
+                    const newQty = parseInt(this.value);
+                    console.log('Quantity input changed for product', productId, 'to', newQty);
+
+                    if (newQty < 1) {
+                        removeFromCart(productId);
+                    } else {
+                        updateCartQuantity(productId, newQty);
+                    }
+                });
+            });
+
+            function updateCartQuantity(productId, quantity) {
+                console.log('Updating cart quantity:', productId, quantity);
+
+                fetch('{{ route('cart.update') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Update response:', data);
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error updating cart: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating cart');
+                });
+            }
+
+            function removeFromCart(productId) {
+                console.log('Removing from cart:', productId);
+
+                fetch('{{ route('cart.remove') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                    },
+                    body: JSON.stringify({
+                        product_id: productId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Remove response:', data);
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error removing item: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error removing item');
+                });
+            }
+
+            console.log('Main cart functionality setup complete');
         });
     </script>
 @endsection
