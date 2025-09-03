@@ -9,15 +9,23 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StripePaymentController;
 
 Route::get('/', function () {
     return view('index');
 });
 Route::get('cart', [CartController::class, 'cart'])->name('cart');
+// Stripe Payment Routes
+Route::get('/checkout', [StripePaymentController::class, 'checkout'])->name('checkout');
+Route::post('/create-payment-intent', [StripePaymentController::class, 'createPaymentIntent'])->name('payment.intent');
+Route::get('/payment-success', [StripePaymentController::class, 'paymentSuccess'])->name('payment.success');
+Route::get('/payment-cancel', [StripePaymentController::class, 'paymentCancel'])->name('payment.cancel');
+Route::post('/cod-order', [StripePaymentController::class, 'processCOD'])->name('cod.process');
+Route::get('/cod-success/{order}', [StripePaymentController::class, 'codSuccess'])->name('cod.success');
 
-Route::get('/checkout', function () {
-    return view('checkout');
-});
+// Route::get('/checkout', function () {
+//     return view('checkout');
+// });
 Route::get('/products/featured', [ProductController::class, 'featured'])->name('product.featured');
 Route::get('/product-detail/{product}', [ProductController::class, 'detail_show'])->name('product.detail');
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
@@ -91,4 +99,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/profile', 'edit')->name('profile.edit');
         Route::post('/profile', 'update')->name('profile.update');
     });
+
+
+  Route::controller(App\Http\Controllers\OrderController::class)->group(function () {
+    Route::get('orders', 'index')->name('order.index');
+    Route::get('orders/{order}', 'show')->name('order.show');
+    Route::patch('orders/{order}/status', 'updateStatus')->name('order.update-status');
+});
 });

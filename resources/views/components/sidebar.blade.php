@@ -101,6 +101,37 @@
   </li>
   <!-- End Users -->
 
+
+  <!-- Orders -->
+<li class="side-nav-menu-item side-nav-has-menu {{ Request::is('admin/orders*') ? 'active' : '' }}">
+  <a class="side-nav-menu-link media align-items-center" href="#"
+     data-target="#subOrders">
+    <span class="side-nav-menu-icon d-flex mr-3">
+      <i class="gd-shopping-cart"></i>
+    </span>
+    <span class="side-nav-fadeout-on-closed media-body">Orders</span>
+    <span class="side-nav-control-icon d-flex">
+      <i class="gd-angle-right side-nav-fadeout-on-closed"></i>
+    </span>
+    <span class="side-nav__indicator side-nav-fadeout-on-closed"></span>
+  </a>
+
+  <!-- Orders: sub -->
+  <ul id="subOrders" class="side-nav-menu side-nav-menu-second-level mb-0">
+    <li class="side-nav-menu-item {{ Request::is('admin/orders') ? 'active' : '' }}">
+      <a class="side-nav-menu-link" href="{{ route('order.index') }}">All Orders</a>
+    </li>
+    <li class="side-nav-menu-item {{ Request::is('admin/orders/pending') ? 'active' : '' }}">
+      <a class="side-nav-menu-link" href="{{ route('order.index', ['status' => 'pending']) }}">Pending Orders</a>
+    </li>
+    <li class="side-nav-menu-item {{ Request::is('admin/orders/confirmed') ? 'active' : '' }}">
+      <a class="side-nav-menu-link" href="{{ route('order.index', ['status' => 'confirmed']) }}">Confirmed Orders</a>
+    </li>
+  </ul>
+  <!-- Orders: sub -->
+</li>
+<!-- End Orders -->
+
 </ul>
 </aside>
 <!-- End Sidebar Nav -->
