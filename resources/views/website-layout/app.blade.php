@@ -24,6 +24,87 @@
 
     <link rel="stylesheet" href="{{ asset('assets/imgs/css/main.css') }}">
     <title>NUTRITIONAL REMEDIES</title>
+
+    <style>
+        .loved-wrap .loved-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #fff;
+        }
+
+        .loved-wrap .loved-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .loved-wrap .loved-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .loved-wrap .loved-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .loved-wrap .loved-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+        }
+
+        .loved-wrap .loved-card:hover .loved-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loved-wrap .loved-icon {
+            background: white;
+            border: none;
+            color: #35B4AD;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            transform: scale(0.8);
+        }
+
+        .loved-wrap .loved-card:hover .loved-icon {
+            transform: scale(1);
+            background: white;
+        }
+
+        .loved-wrap .loved-icon:hover {
+            background: white !important;
+            transform: scale(1.1) !important;
+        }
+
+        .product-info-link {
+            text-decoration: none;
+        }
+
+        .product-info-link h6 {
+            color: black;
+        }
+    </style>
 </head>
 
 <body>

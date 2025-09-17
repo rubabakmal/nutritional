@@ -8,19 +8,25 @@
             <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="{{ asset('assets/imgs/banner1.jpg') }}" class="d-block w-100" alt="Banner 1">
+                        <img src="{{ asset('assets/imgs/carosul1.jpeg') }}" class="d-block w-100" alt="Banner 1">
                     </div>
                     <div class="carousel-item carousel-with-overlay">
-                        <img src="{{ asset('assets/imgs/banner2.jpg') }}" class="d-block w-100" alt="Banner 2">
-                        <div class="carousel-overlay">
-                            <div class="overlay-text">
-                                <h4>Shop Honey Fusions</h4>
-                            </div>
-                        </div>
+                        <img src="{{ asset('assets/imgs/carosul2.jpeg') }}" class="d-block w-100" alt="Banner 2">
+
                     </div>
                     <div class="carousel-item">
-                        <img src="{{ asset('assets/imgs/banner3.jpg') }}" class="d-block w-100" alt="Banner 3">
+                        <img src="{{ asset('assets/imgs/carosul3.jpeg') }}" class="d-block w-100" alt="Banner 3">
                     </div>
+                    <div class="carousel-item">
+                        <img src="{{ asset('assets/imgs/carosul4.jpeg') }}" class="d-block w-100" alt="Banner 3">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{{ asset('assets/imgs/carosul5.jpeg') }}" class="d-block w-100" alt="Banner 3">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{{ asset('assets/imgs/carosul6.jpeg') }}" class="d-block w-100" alt="Banner 3">
+                    </div>
+
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
                     data-bs-slide="prev">
@@ -718,56 +724,61 @@
             $featuredProducts = Product::with('category')->where('status', 'active')->latest()->limit(10)->get();
         @endphp
 
-        <div class="most-loved-wrap">
-            <section class="py-5">
-                <div class="container text-center">
-                    <h2 class="goal-title" style="padding-top: 2rem; padding-bottom:2rem;">Our Most-Loved</h2>
-                    <div class="mx-auto position-relative" style="max-width: 1100px;">
-                        <div class="owl-carousel owl-theme most-loved-carousel">
 
-                            @if ($featuredProducts->count() > 0)
-                                @foreach ($featuredProducts as $product)
-                                    <div class="item">
-                                        <div class="loved-card-wrapper">
-                                            <!-- Product Image - Clickable with ID -->
-                                            <a href="{{ route('product.detail', $product->id) }}" class="product-link">
-                                                <div class="loved-card position-relative">
-                                                    <img src="{{ $product->image ? Storage::url($product->image) : asset('assets/imgs/default-product.jpg') }}"
-                                                        alt="{{ $product->name }}" class="img-fluid w-100">
-                                                    <div class="loved-overlay">
-                                                        <!-- Cart Button - Stops propagation -->
-                                                        <button type="button" class="loved-icon btn btn-primary"
-                                                            onclick="event.preventDefault(); event.stopPropagation(); testAddToCart({{ $product->id }})"
-                                                            data-product-id="{{ $product->id }}"
-                                                            data-product-name="{{ $product->name }}"
-                                                            data-product-price="{{ $product->price }}">
-                                                            <i class="fas fa-shopping-cart"></i>
-                                                        </button>
+
+        <div class="loved-wrap">
+            <div class="most-loved-wrap">
+                <section class="py-5">
+                    <div class="container text-center">
+                        <h2 class="goal-title" style="padding-top: 2rem; padding-bottom:2rem;">Our Most-Loved</h2>
+                        <div class="mx-auto position-relative" style="max-width: 1100px;">
+                            <div class="owl-carousel owl-theme most-loved-carousel">
+
+                                @if ($featuredProducts->count() > 0)
+                                    @foreach ($featuredProducts as $product)
+                                        <div class="item">
+                                            <div class="loved-card-wrapper">
+                                                <!-- Product Image - Clickable with ID -->
+                                                <a href="{{ route('product.detail', $product->id) }}"
+                                                    class="product-link">
+                                                    <div class="loved-card position-relative">
+                                                        <img src="{{ $product->image ? Storage::url($product->image) : asset('assets/imgs/default-product.jpg') }}"
+                                                            alt="{{ $product->name }}" class="img-fluid w-100">
+                                                        <div class="loved-overlay">
+                                                            <!-- Cart Button - Stops propagation -->
+                                                            <button type="button" class="loved-icon btn btn-primary"
+                                                                onclick="event.preventDefault(); event.stopPropagation(); testAddToCart({{ $product->id }})"
+                                                                data-product-id="{{ $product->id }}"
+                                                                data-product-name="{{ $product->name }}"
+                                                                data-product-price="{{ $product->price }}">
+                                                                <i class="fas fa-shopping-cart"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </a>
+                                                </a>
 
-                                            <!-- Product Info - Clickable with ID -->
-                                            <a href="{{ route('product.detail', $product->id) }}"
-                                                class="product-info-link">
-                                                <h6 class="mt-3 mb-1">
-                                                    {{ strtoupper($product->category->name ?? 'PRODUCT') }}</h6>
-                                                <p class="text-muted mb-0">{{ $product->name }}</p>
-                                                <small class="text-muted">From AED
-                                                    {{ number_format($product->price, 2) }}</small>
-                                            </a>
+                                                <!-- Product Info - Clickable with ID -->
+                                                <a href="{{ route('product.detail', $product->id) }}"
+                                                    class="product-info-link ">
+                                                    <h6 class="mt-3 mb-1">
+                                                        {{ strtoupper($product->category->name ?? 'PRODUCT') }}</h6>
+                                                    <p class="text-muted mb-0">{{ $product->name }}</p>
+                                                    <small class="text-muted">From AED
+                                                        {{ number_format($product->price, 2) }}</small>
+                                                </a>
+                                            </div>
                                         </div>
+                                    @endforeach
+                                @else
+                                    <div class="alert alert-warning">
+                                        <strong>No products found!</strong> Please add some products to the database.
                                     </div>
-                                @endforeach
-                            @else
-                                <div class="alert alert-warning">
-                                    <strong>No products found!</strong> Please add some products to the database.
-                                </div>
-                            @endif
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
 
 
