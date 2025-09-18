@@ -44,10 +44,12 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 1rem;
+        position: relative;
     }
 
     .brand-logo img {
         width: 5rem;
+        height: auto;
     }
 
     .nav-menu {
@@ -83,7 +85,7 @@
     }
 
     .action-icon:hover {
-        color: white;
+        color: #c8956d;
     }
 
     /* Cart badge */
@@ -114,6 +116,81 @@
         width: 25px;
         height: 3px;
         background-color: #333;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-menu-toggle.active .menu-line:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .mobile-menu-toggle.active .menu-line:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-menu-toggle.active .menu-line:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Mobile Sidebar */
+    .mobile-sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100vh;
+        background-color: #fff;
+        z-index: 10000;
+        transition: left 0.3s ease;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+        padding: 2rem 1.5rem;
+        padding-top: 4rem;
+    }
+
+    .mobile-sidebar.active {
+        left: 0;
+    }
+
+    .mobile-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mobile-sidebar li {
+        margin-bottom: 1.5rem;
+    }
+
+    .mobile-sidebar a {
+        color: #333;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: block;
+        padding: 10px 0;
+    }
+
+    .mobile-sidebar a:hover {
+        color: #c8956d;
+    }
+
+    /* Overlay */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .overlay.active {
+        opacity: 1;
+        visibility: visible;
     }
 
     /* Info banner */
@@ -387,46 +464,45 @@
         margin-top: 5px;
     }
 
+    .checkout {
+        width: 100%;
+    }
+
     /* Mobile Styles */
     @media screen and (max-width: 768px) {
-        .cart-sidebar {
-            width: 100%;
-            right: -100%;
-        }
-
-        .nav-menu {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 80%;
-            height: 100vh;
-            background-color: #fff;
-            flex-direction: column;
-            padding: 2rem 1.5rem;
-            gap: 1.5rem;
-            transition: left 0.3s ease-in-out;
-            z-index: 9997;
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .nav-menu.active {
-            left: 0;
+        .navbar-content {
+            justify-content: flex-start;
+            position: relative;
         }
 
         .mobile-menu-toggle {
             display: flex;
+            order: 1;
         }
 
-        .nav-menu li {
-            list-style: none;
+        .brand-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            order: 2;
         }
 
-        .nav-menu li a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 18px;
+        .brand-logo img {
+            width: 4rem;
+        }
+
+        .nav-actions {
+            order: 3;
+            margin-left: auto;
+        }
+
+        .nav-menu {
+            display: none;
+        }
+
+        .cart-sidebar {
+            width: 100%;
+            right: -100%;
         }
 
         .top-header-content {
@@ -440,10 +516,14 @@
             align-items: center;
             gap: 10px;
         }
-    }
 
-    .checkout {
-        width: 100%;
+        .info-content .info2 {
+            display: none;
+        }
+
+        .info-content .info3 {
+            display: none;
+        }
     }
 </style>
 
@@ -465,32 +545,35 @@
 
     <div class="container">
         <div class="header-inner">
-            <nav class="main-navbar" id="mainNavbar">
+            <nav class="main-navbar">
                 <div class="navbar-content">
+                    <!-- Mobile Menu Toggle (Left) -->
+                    <div class="mobile-menu-toggle" onclick="toggleMobileMenu()" id="mobileMenuToggle">
+                        <div class="menu-line"></div>
+                        <div class="menu-line"></div>
+                        <div class="menu-line"></div>
+                    </div>
+
+                    <!-- Logo (Center) -->
                     <a href="{{ url('/') }}" class="brand-logo">
                         <img src="{{ asset('assets/imgs/logo.png') }}" alt="Logo">
                     </a>
 
-                    <ul class="nav-menu" id="navMenu">
+                    <!-- Desktop Navigation Menu -->
+                    <ul class="nav-menu">
                         <li><a href="{{ url('/') }}">Home</a></li>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Service</a></li>
-                        <li><a href="#">Product</a></li>
-                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#about-us" onclick="smoothScrollTo('about-us')">About</a></li>
+                        <li><a href="#goal" onclick="smoothScrollTo('goal')">Our Goals</a></li>
+                        <li><a href="#product" onclick="smoothScrollTo('product')">Product</a></li>
+                        <li><a href="#blogs" onclick="smoothScrollTo('blogs')">Our Blogs</a></li>
                     </ul>
 
+                    <!-- Cart Actions (Right) -->
                     <div class="nav-actions">
                         <div class="action-icon" onclick="toggleCart()" id="cartIcon">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="cart-badge" id="cartBadge">{{ $cartCount }}</span>
                         </div>
-                    </div>
-
-                    <!-- Mobile Menu Toggle -->
-                    <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                        <div class="menu-line"></div>
-                        <div class="menu-line"></div>
-                        <div class="menu-line"></div>
                     </div>
                 </div>
             </nav>
@@ -505,11 +588,11 @@
                     <div class="info-icon">🚚</div>
                     <span>Free shipping on AED 500+ orders (UAE)</span>
                 </div>
-                <div class="info-item">
+                <div class="info-item info2">
                     <div class="info-icon">📧</div>
                     <span>Sign up for 10% off!</span>
                 </div>
-                <div class="info-item">
+                <div class="info-item info3">
                     <div class="info-icon">⭐</div>
                     <span>500+ 5 star reviews</span>
                 </div>
@@ -517,6 +600,20 @@
         </div>
     </div>
 </div>
+
+<!-- Mobile Menu Sidebar -->
+<div class="mobile-sidebar" id="mobileSidebar">
+    <ul>
+        <li><a href="{{ url('/') }}">Home</a></li>
+        <li><a href="#about-us" onclick="smoothScrollTo('about-us')">About</a></li>
+        <li><a href="#goal" onclick="smoothScrollTo('goal')">Our Goals</a></li>
+        <li><a href="#product" onclick="smoothScrollTo('product')">Product</a></li>
+        <li><a href="#blogs" onclick="smoothScrollTo('blogs')">Our Blogs</a></li>
+    </ul>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
 
 <!-- Cart Overlay -->
 <div class="cart-overlay" id="cartOverlay"></div>
@@ -540,17 +637,50 @@
 </div>
 
 <script>
-    // CSRF token for Laravel AJAX requests
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
         '{{ csrf_token() }}';
 
-    // Mobile menu toggle
+
+    // Smooth scroll function
+    function smoothScrollTo(targetId) {
+        const target = document.getElementById(targetId);
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
+    // Toggle mobile menu
     function toggleMobileMenu() {
-        const navMenu = document.getElementById('navMenu');
-        navMenu.classList.toggle('active');
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('overlay');
+        const toggle = document.getElementById('mobileMenuToggle');
+
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        toggle.classList.toggle('active');
+
+        if (sidebar.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
     }
 
-    // Toggle cart sidebar
+    // Close mobile menu
+    function closeMobileMenu() {
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('overlay');
+        const toggle = document.getElementById('mobileMenuToggle');
+
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        toggle.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Cart functions (same as before)
     function toggleCart() {
         const overlay = document.getElementById('cartOverlay');
         const sidebar = document.getElementById('cartSidebar');
@@ -560,19 +690,21 @@
 
         if (sidebar.classList.contains('active')) {
             loadCartFromDatabase();
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
         }
     }
 
-    // Close cart
     function closeCart() {
         const overlay = document.getElementById('cartOverlay');
         const sidebar = document.getElementById('cartSidebar');
 
         overlay.classList.remove('active');
         sidebar.classList.remove('active');
+        document.body.style.overflow = '';
     }
 
-    // Load cart items from database
     function loadCartFromDatabase() {
         fetch('{{ route('cart.items') }}', {
                 method: 'GET',
@@ -587,7 +719,6 @@
                     displayCartItems(data.items, data.total, data.count);
                     updateCartBadge(data.count);
                 } else {
-                    console.error('Error loading cart:', data.message);
                     showEmptyCart();
                 }
             })
@@ -597,7 +728,6 @@
             });
     }
 
-    // Display cart items (same as before but with database data)
     function displayCartItems(items, total, count) {
         const cartBody = document.getElementById('cartBody');
         const cartFooter = document.getElementById('cartFooter');
@@ -607,7 +737,6 @@
             return;
         }
 
-        // Render cart items
         cartBody.innerHTML = items.map(item => `
             <div class="cart-item">
                 <div class="item-image">
@@ -626,20 +755,16 @@
             </div>
         `).join('');
 
-        // Calculate shipping and totals (same logic as before)
         const subtotal = total;
         const shipping = subtotal >= 500 ? 0 : 25;
         const finalTotal = subtotal + shipping;
         const freeShippingProgress = Math.min((subtotal / 500) * 100, 100);
         const amountToFreeShipping = Math.max(500 - subtotal, 0);
 
-        // Render footer
         cartFooter.innerHTML = `
-
-
-                 <a href="{{ route('cart') }}" class="cart-text">
-                       <span>All Cart Products</span>
-                </a>
+            <a href="{{ route('cart') }}" class="cart-text">
+                <span>All Cart Products</span>
+            </a>
             <div class="shipping-progress">
                 <div class="progress-bar" style="width: ${freeShippingProgress}%"></div>
             </div>
@@ -649,7 +774,6 @@
                     : 'You qualify for FREE SHIPPING!'
                 }
             </div>
-
             <div class="cart-summary">
                 <div class="summary-row">
                     <span>Subtotal (${count} item${count !== 1 ? 's' : ''})</span>
@@ -664,11 +788,9 @@
                     <span>AED ${finalTotal.toFixed(2)}</span>
                 </div>
             </div>
-
             <div class="shipping-note">
                 Your cart is reserved for 10 Minutes. The stock is limited! Finalize your order now
             </div>
-
             <div class="text-center">
                 <a href="{{ route('checkout') }}" class="shop-now-btn checkout">
                     Checkout
@@ -678,7 +800,6 @@
         `;
     }
 
-    // Show empty cart
     function showEmptyCart() {
         const cartBody = document.getElementById('cartBody');
         const cartFooter = document.getElementById('cartFooter');
@@ -693,7 +814,6 @@
         cartFooter.innerHTML = '';
     }
 
-    // Update quantity in database
     function updateQuantityInDatabase(productId, newQuantity) {
         newQuantity = parseInt(newQuantity);
         if (newQuantity < 0) return;
@@ -713,7 +833,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    loadCartFromDatabase(); // Reload cart
+                    loadCartFromDatabase();
                     showNotification('Cart updated', 'success');
                 } else {
                     showNotification(data.message || 'Error updating cart', 'error');
@@ -725,7 +845,6 @@
             });
     }
 
-    // Remove item from database
     function removeItemFromDatabase(productId) {
         if (!confirm('Remove this item from cart?')) return;
 
@@ -743,7 +862,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    loadCartFromDatabase(); // Reload cart
+                    loadCartFromDatabase();
                     showNotification('Item removed', 'success');
                 } else {
                     showNotification(data.message || 'Error removing item', 'error');
@@ -755,12 +874,10 @@
             });
     }
 
-    // Update cart badge
     function updateCartBadge(count) {
         const cartBadge = document.getElementById('cartBadge');
         if (cartBadge) {
             cartBadge.textContent = count;
-            // Add animation
             cartBadge.style.transform = 'scale(1.2)';
             setTimeout(() => {
                 cartBadge.style.transform = 'scale(1)';
@@ -768,7 +885,6 @@
         }
     }
 
-    // Add to cart function (called from product pages)
     function addToCart(productId, productName, productPrice, productImage) {
         fetch('{{ route('cart.add') }}', {
                 method: 'POST',
@@ -787,8 +903,6 @@
                 if (data.success) {
                     updateCartBadge(data.cart_count);
                     showNotification('Product added to cart!', 'success');
-
-                    // Show cart after adding item
                     setTimeout(() => {
                         toggleCart();
                     }, 500);
@@ -802,15 +916,12 @@
             });
     }
 
-    // Show notification
     function showNotification(message, type = 'success') {
         const notification = document.createElement('div');
-        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} notification-toast`;
         notification.innerHTML = `
             <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle me-2"></i>
             ${message}
         `;
-
         notification.style.cssText = `
             position: fixed;
             top: 20px;
@@ -821,24 +932,20 @@
             border-radius: 5px;
             color: white;
             background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-            animation: slideIn 0.3s ease;
         `;
-
         document.body.appendChild(notification);
-
         setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
-                }
-            }, 300);
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
         }, 3000);
     }
 
-    // Initialize on page load
+    // Event listeners
+    document.getElementById('overlay').addEventListener('click', closeMobileMenu);
+    document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Load initial cart count
         fetch('{{ route('cart.items') }}', {
                 method: 'GET',
                 headers: {
@@ -854,46 +961,4 @@
             })
             .catch(error => console.error('Error loading cart count:', error));
     });
-
-    // Event listeners (same as before)
-    document.addEventListener('click', function(event) {
-        const sidebar = document.getElementById('cartSidebar');
-        const cartIcon = document.getElementById('cartIcon');
-        const navMenu = document.getElementById('navMenu');
-        const mobileToggle = document.querySelector('.mobile-menu-toggle');
-
-        if (!sidebar.contains(event.target) && !cartIcon.contains(event.target)) {
-            if (sidebar.classList.contains('active')) {
-                closeCart();
-            }
-        }
-
-        if (!navMenu.contains(event.target) && !mobileToggle.contains(event.target)) {
-            if (navMenu.classList.contains('active')) {
-                navMenu.classList.remove('active');
-            }
-        }
-    });
-
-    document.getElementById('cartSidebar').addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
-
-    document.getElementById('cartOverlay').addEventListener('click', function() {
-        closeCart();
-    });
-
-    // CSS for animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
 </script>

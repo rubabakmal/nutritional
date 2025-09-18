@@ -43,7 +43,7 @@
 
         </div>
 
-        <section class="goal-section">
+        <section class="goal-section" id="goal">
             <h2 class="goal-title">Find Honey For Your Goal</h2>
             <div class="goal-grid">
                 <div class="goal-box">
@@ -315,7 +315,7 @@
         </section>
 
 
-        <section class="video-section">
+        {{-- <section class="video-section">
             <div class="video-wrap">
                 <video autoplay muted loop playsinline class="background-video">
                     <source src="{{ asset('assets/imgs/video.mp4') }}" type="video/mp4">
@@ -324,10 +324,10 @@
                 <div class="video-overlay">
                 </div>
             </div>
-        </section>
+        </section> --}}
 
 
-        <section class="why-choose-section py-5">
+        <section class="why-choose-section py-5" id="about-us">
             <div class="container">
                 <div class="row">
                     <div class="col-12">
@@ -384,7 +384,7 @@
 
 
 
-        <div class="cart-section">
+        <div class="cart-section" id="product">
             <div class="container d-flex flex-column align-items-center">
 
                 <h2 class="goal-title" style="padding-top: 2rem;
@@ -869,7 +869,7 @@
 
 
 
-        <section class="py-5">
+        <section class="py-5" id="blogs">
             <div class="container d-flex flex-column align-items-center">
                 <h2 class="goal-title" style="padding-top: 2rem;
                 padding-bottom:2rem;">Take a Read of Our

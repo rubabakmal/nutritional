@@ -1620,3 +1620,8 @@ body {
     z-index: 1;
     text-decoration: none;
 }
+@media (min-width: 776px) {
+    .carousl-wrap img {
+        height: 90vh !important;
+    }
+}
