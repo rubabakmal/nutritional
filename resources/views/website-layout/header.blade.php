@@ -8,8 +8,12 @@
 <style>
     /* Header Styles */
     .header-wrap {
-        background-color: #fff;
+        background-color: #212529;
         font-family: Arial, sans-serif;
+        position: fixed;
+        width: 100%;
+        z-index: 10;
+        top: 0;
     }
 
     .header-wrap .top-header {
@@ -62,12 +66,12 @@
 
     .nav-menu a {
         text-decoration: none;
-        color: #333;
+        color: white;
         font-weight: 500;
     }
 
     .nav-menu a:hover {
-        color: #c8956d;
+        color: #35b4ad;
     }
 
     .nav-actions {
@@ -85,7 +89,7 @@
     }
 
     .action-icon:hover {
-        color: #c8956d;
+        color: white;
     }
 
     /* Cart badge */
@@ -115,7 +119,7 @@
     .mobile-menu-toggle .menu-line {
         width: 25px;
         height: 3px;
-        background-color: #333;
+        background-color: white;
         transition: all 0.3s ease;
     }
 
@@ -258,13 +262,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #f8f4ef;
+        background-color: #212529;
     }
 
     .cart-title {
         font-size: 20px;
         font-weight: bold;
-        color: #333;
+        color: white;
         flex: 1;
         margin: 0;
     }
@@ -279,7 +283,7 @@
     }
 
     .cart-close:hover {
-        color: #333;
+        color: white;
     }
 
     .cart-body {
@@ -468,6 +472,10 @@
         width: 100%;
     }
 
+    .main-carosul {
+        padding-top: 6rem;
+    }
+
     /* Mobile Styles */
     @media screen and (max-width: 768px) {
         .navbar-content {
@@ -525,23 +533,16 @@
             display: none;
         }
     }
+
+    @media(max-width:554px) {
+        .main-carosul {
+            padding-top: 4.5rem !important;
+        }
+    }
 </style>
 
 <div class="header-wrap">
-    <div class="top-header">
-        <div class="top-header-content">
-            <div class="header-left"></div>
-            <div class="header-center">
-                Sign up to our newsletter for 10% off your first order
-            </div>
-            <div class="header-right">
-                <a href="#" class="store-locator">
-                    <span class="location-icon">📍</span>
-                    Store Locator
-                </a>
-            </div>
-        </div>
-    </div>
+
 
     <div class="container">
         <div class="header-inner">
@@ -581,7 +582,7 @@
     </div>
 
     <!-- Info Banner -->
-    <div class="info-banner">
+    {{-- <div class="info-banner">
         <div class="container">
             <div class="info-content">
                 <div class="info-item">
@@ -594,11 +595,11 @@
                 </div>
                 <div class="info-item info3">
                     <div class="info-icon">⭐</div>
-                    <span>500+ 5 star reviews</span>
+                    <span>Top Rated Honey's</span>
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 
 <!-- Mobile Menu Sidebar -->

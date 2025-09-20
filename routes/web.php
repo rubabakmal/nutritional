@@ -14,6 +14,21 @@ use App\Http\Controllers\StripePaymentController;
 Route::get('/', function () {
     return view('index');
 });
+Route::get('/blog-detail', function () {
+    return view('blog-detail');
+});
+Route::get('/honey-blog', function () {
+    return view('honey-blog');
+})->name('honey.blog');
+
+Route::get('/blog-detail', function () {
+    return view('blog-detail');
+})->name('blog.detail');
+
+Route::get('/shalajeet-blog', function () {
+    return view('shalajeet-blog');
+})->name('shalajeet.blog');
+
 Route::get('cart', [CartController::class, 'cart'])->name('cart');
 // Stripe Payment Routes
 Route::get('/checkout', [StripePaymentController::class, 'checkout'])->name('checkout');
@@ -101,9 +116,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     });
 
 
-  Route::controller(App\Http\Controllers\OrderController::class)->group(function () {
-    Route::get('orders', 'index')->name('order.index');
-    Route::get('orders/{order}', 'show')->name('order.show');
-    Route::patch('orders/{order}/status', 'updateStatus')->name('order.update-status');
-});
+    Route::controller(App\Http\Controllers\OrderController::class)->group(function () {
+        Route::get('orders', 'index')->name('order.index');
+        Route::get('orders/{order}', 'show')->name('order.show');
+        Route::patch('orders/{order}/status', 'updateStatus')->name('order.update-status');
+    });
 });

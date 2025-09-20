@@ -104,6 +104,73 @@
         .product-info-link h6 {
             color: black;
         }
+
+        #carouselExampleIndicators .carousel-indicators {
+            bottom: 12px;
+            /* lower the dots if you like */
+        }
+
+        #carouselExampleIndicators .carousel-indicators [data-bs-target] {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .carousel-item {
+            position: relative;
+            /* Ensure it's positioned relative to allow absolute positioning of the button */
+        }
+
+        .carousl-wrap .carousel-overlay {
+            position: absolute;
+            top: 69%;
+            /* Vertically center the button */
+            left: 15%;
+            /* Position it to the left */
+            transform: translate(-50%, -50%);
+            /* Adjust the position to be more accurate */
+            z-index: 10;
+            /* Ensure the button is on top of the image */
+        }
+
+        .carousl-wrap .carousel-overlay .btn {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #ff9800;
+            /* Custom color for the button */
+            border: none;
+            color: white;
+            border-radius: 5px;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+        }
+
+        .carousel-overlay .btn:hover {
+            background-color: #e68900;
+            /* Darken the button on hover */
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .loved-card-wrapper h6 {
+            color: black;
+            font-weight: 600;
+        }
+
+
+        @media (max-width: 554px) {
+            .carousel-overlay .shop-now-btn {
+                font-size: 12px;
+                padding: 5px 10px;
+
+            }
+
+            .carousel-overlay .shop-now-btn .btn-arrow {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 
@@ -278,7 +345,7 @@
                     console.log('✅ Response Data:', data);
 
                     if (data.success) {
-                        alert('✅ Product added to cart! Check console for details.');
+                        alert('✅ Product added to cart! Please check your Cart list');
                         console.log('Cart Count:', data.cart_count);
                         console.log('Cart Total:', data.cart_total);
 
@@ -344,6 +411,18 @@
                 console.error('Cart API Error:', error);
             });
     </script>
+
+    <script>
+        const el = document.getElementById('carouselExampleIndicators');
+        new bootstrap.Carousel(el, {
+            interval: 3000,
+            pause: false,
+            ride: 'carousel',
+            touch: true,
+            wrap: true
+        });
+    </script>
+
 </body>
 
 </html>

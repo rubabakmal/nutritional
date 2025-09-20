@@ -325,6 +325,7 @@
         }
 
         @media (max-width: 480px) {
+
             .main-cart-table,
             .main-cart-table thead,
             .main-cart-table tbody,
@@ -368,7 +369,7 @@
 
     <!-- Main Cart Container -->
     <div class="main-cart-container">
-        @if($formattedItems->count() > 0)
+        @if ($formattedItems->count() > 0)
             <table class="main-cart-table">
                 <thead>
                     <tr>
@@ -380,13 +381,13 @@
                     </tr>
                 </thead>
                 <tbody id="mainCartTableBody">
-                    @foreach($formattedItems as $item)
+                    @foreach ($formattedItems as $item)
                         <tr data-product-id="{{ $item['id'] }}">
                             <td data-label="Product">
                                 <div class="main-product-info">
                                     <div class="main-product-image">
                                         <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}"
-                                             onerror="this.src='{{ asset('assets/imgs/default-product.jpg') }}'">
+                                            onerror="this.src='{{ asset('assets/imgs/default-product.jpg') }}'">
                                     </div>
                                     <div class="main-product-details">
                                         <h3>{{ $item['name'] }}</h3>
@@ -395,21 +396,27 @@
                                 </div>
                             </td>
                             <td data-label="Price">
-                                <div class="main-price">AED {{ number_format($item['price'], 2) }}</div>
+                                <div class="main-price">£
+                                    {{ number_format($item['price'], 2) }}</div>
                             </td>
                             <td data-label="Quantity">
                                 <div class="main-quantity-controls">
-                                    <button type="button" class="main-quantity-btn decrease-btn" data-id="{{ $item['id'] }}">−</button>
+                                    <button type="button" class="main-quantity-btn decrease-btn"
+                                        data-id="{{ $item['id'] }}">−</button>
                                     <input type="number" class="main-quantity-input" value="{{ $item['quantity'] }}"
-                                           data-id="{{ $item['id'] }}" min="1" max="10">
-                                    <button type="button" class="main-quantity-btn increase-btn" data-id="{{ $item['id'] }}">+</button>
+                                        data-id="{{ $item['id'] }}" min="1" max="10">
+                                    <button type="button" class="main-quantity-btn increase-btn"
+                                        data-id="{{ $item['id'] }}">+</button>
                                 </div>
                             </td>
                             <td data-label="Total">
-                                <div class="main-total-price" data-price="{{ $item['price'] }}">AED {{ number_format($item['total'], 2) }}</div>
+                                <div class="main-total-price" data-price="{{ $item['price'] }}">£
+
+                                    {{ number_format($item['total'], 2) }}</div>
                             </td>
                             <td data-label="Action">
-                                <button type="button" class="main-remove-btn" data-id="{{ $item['id'] }}">Remove</button>
+                                <button type="button" class="main-remove-btn"
+                                    data-id="{{ $item['id'] }}">Remove</button>
                             </td>
                         </tr>
                     @endforeach
@@ -425,26 +432,34 @@
                 <div class="main-cart-summary">
                     <div class="main-summary-row">
                         <span>Subtotal ({{ $cartCount }} item{{ $cartCount != 1 ? 's' : '' }}):</span>
-                        <span id="subtotal-amount">AED {{ number_format($cartTotal, 2) }}</span>
+                        <span id="subtotal-amount">£
+                            {{ number_format($cartTotal, 2) }}</span>
                     </div>
                     <div class="main-summary-row">
                         <span>Shipping:</span>
-                        <span id="shipping-amount">{{ $shipping == 0 ? 'FREE' : 'AED ' . number_format($shipping, 2) }}</span>
+                        <span
+                            id="shipping-amount">{{ $shipping == 0
+                                ? 'FREE'
+                                : '£
+                                                         ' . number_format($shipping, 2) }}</span>
                     </div>
                     <div class="main-summary-row subtotal">
                         <span>TOTAL:</span>
-                        <span id="final-total">AED {{ number_format($finalTotal, 2) }}</span>
+                        <span id="final-total">£
+                            {{ number_format($finalTotal, 2) }}</span>
                     </div>
                     <p class="main-shipping-note" id="shipping-note">
-                        @if($shipping > 0)
-                            Add AED {{ number_format(500 - $cartTotal, 2) }} more for free shipping!
+                        @if ($shipping > 0)
+                            Add £
+                            {{ number_format(500 - $cartTotal, 2) }} more for free shipping!
                         @else
                             You qualify for FREE shipping!
                         @endif
                     </p>
                     <div class="text-center">
-                        <a href="{{ route('checkout') }}" class="main-checkout-btn">
-                            Checkout
+                        <a href="{{ route('checkout') }}" class="shop-now-btn">
+                            Shop Now
+                            <span class="btn-arrow">→</span>
                         </a>
                     </div>
                 </div>
@@ -474,7 +489,8 @@
             document.querySelectorAll('.increase-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     const productId = this.getAttribute('data-id');
-                    const input = document.querySelector(`.main-quantity-input[data-id="${productId}"]`);
+                    const input = document.querySelector(
+                        `.main-quantity-input[data-id="${productId}"]`);
                     const newQty = parseInt(input.value) + 1;
                     console.log('Increasing quantity for product', productId, 'to', newQty);
                     updateCartQuantity(productId, newQty);
@@ -484,7 +500,8 @@
             document.querySelectorAll('.decrease-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     const productId = this.getAttribute('data-id');
-                    const input = document.querySelector(`.main-quantity-input[data-id="${productId}"]`);
+                    const input = document.querySelector(
+                        `.main-quantity-input[data-id="${productId}"]`);
                     const newQty = parseInt(input.value) - 1;
                     console.log('Decreasing quantity for product', productId, 'to', newQty);
 
@@ -524,57 +541,57 @@
                 console.log('Updating cart quantity:', productId, quantity);
 
                 fetch('{{ route('cart.update') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token,
-                    },
-                    body: JSON.stringify({
-                        product_id: productId,
-                        quantity: quantity
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            quantity: quantity
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Update response:', data);
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('Error updating cart: ' + (data.message || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error updating cart');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Update response:', data);
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error updating cart: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error updating cart');
+                    });
             }
 
             function removeFromCart(productId) {
                 console.log('Removing from cart:', productId);
 
                 fetch('{{ route('cart.remove') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token,
-                    },
-                    body: JSON.stringify({
-                        product_id: productId
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                        },
+                        body: JSON.stringify({
+                            product_id: productId
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Remove response:', data);
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('Error removing item: ' + (data.message || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error removing item');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Remove response:', data);
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error removing item: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error removing item');
+                    });
             }
 
             console.log('Main cart functionality setup complete');

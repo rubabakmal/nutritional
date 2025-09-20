@@ -11,6 +11,9 @@
 .container-xxl {
     max-width: 1400px;
 }
+img {
+    max-width: 100% !important;
+}
 body {
     font-family: "Red Hat Display", sans-serif;
     font-optical-sizing: auto;
@@ -308,19 +311,6 @@ body {
     position: relative;
 }
 
-.carousel-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3); /* Light black overlay */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-}
-
 .overlay-text {
     text-align: center;
     color: white;
@@ -351,16 +341,6 @@ body {
 .carousel-control-prev,
 .carousel-control-next {
     z-index: 3;
-}
-
-/* Optional: Smooth transition for overlay */
-.carousel-overlay {
-    transition: opacity 0.5s ease-in-out;
-}
-
-/* Optional: Hover effect for overlay */
-.carousel-with-overlay:hover .carousel-overlay {
-    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .goal-section {
@@ -1466,7 +1446,7 @@ body {
     background-color: #f1f1f1;
 }
 .loved-card img {
-    height: 230px; /* 👈 adjust as needed */
+    height: 326px; /* 👈 adjust as needed */
     object-fit: contain;
 }
 
@@ -1478,7 +1458,7 @@ body {
 }
 
 .cart-section .loved-card img {
-    max-height: 180px; /* smaller height */
+    max-height: 326px; /* smaller height */
     width: auto;
     margin: 0 auto;
 }
@@ -1524,6 +1504,11 @@ body {
 .cart-section .container {
     padding-left: 20px;
     padding-right: 20px;
+}
+
+.cart-section {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
 }
 .footer-link {
     color: #fff !important;
@@ -1624,4 +1609,46 @@ body {
     .carousl-wrap img {
         height: 90vh !important;
     }
+}
+/* clamp horizontal overflow for this section only */
+.customer-reviews-section {
+    position: relative;
+    overflow-x: clip; /* modern browsers */
+}
+@supports not (overflow-x: clip) {
+    .customer-reviews-section {
+        overflow-x: hidden;
+    } /* fallback */
+}
+
+/* also keep inner carousel from pushing width */
+.customer-reviews-section .carousel {
+    overflow: hidden;
+}
+
+/* keep nav arrows inside the container */
+.customer-reviews-section .carousel-control-prev {
+    left: 8px; /* was default: negative/edge — causes overflow at zoom */
+}
+.customer-reviews-section .carousel-control-next {
+    right: 8px;
+}
+
+/* make arrow hitbox compact so it doesn't extend out */
+.customer-reviews-section .carousel-arrow {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+}
+
+/* safety: cards/images never exceed column width */
+.customer-reviews-section .review-card {
+    max-width: 100%;
+}
+.customer-reviews-section .product-img {
+    max-width: 56px;
+    height: auto;
 }
