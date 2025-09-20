@@ -1,8 +1,19 @@
 @extends('website-layout.app')
 
+@php
+    use Illuminate\Support\Str;
+
+    // Prepare 200-word excerpt + remainder from the product description
+    $descRaw = $product->description ?? '';
+    $descPlain = trim(preg_replace('/\s+/', ' ', strip_tags($descRaw))); // keep counting clean
+    $words = $descPlain !== '' ? preg_split('/\s+/', $descPlain) : [];
+    $excerpt = $words ? implode(' ', array_slice($words, 0, 100)) : '';
+    $remainder = $words && count($words) > 100 ? implode(' ', array_slice($words, 100)) : '';
+@endphp
+
 <style>
     .product-detail-wrap {
-        margin-top: 20px;
+        margin-top: 130px;
     }
 
     .product-detail-content {
@@ -55,19 +66,45 @@
     }
 
     .quantity-select select {
-        padding: 10px;
-        font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        background-color: #50BDB7;
+        width: 73%;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #35b4ad;
         color: white;
-        cursor: pointer;
-        width: 80px;
-        transition: background-color 0.3s ease;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 15px 35px 15px 20px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px #35b4ae82;
+        text-transform: capitalize;
+        letter-spacing: 0.5px;
+
+        /* border aur outline reset */
+        border: none;
+        outline: none;
+
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 18px;
     }
+
 
     .quantity-select select:hover {
         background-color: #50BDB7;
+    }
+
+    .quantity-select select:focus {
+        outline: none;
+        border: none;
+        box-shadow: 0 4px 15px #35b4ae82;
+        /* apna shadow rakho */
     }
 
     .add-to-cart-btn {
@@ -161,7 +198,27 @@
         border: 1px solid #f5c6cb;
     }
 
-    /* Responsive Design */
+    /* New: long description block below the carousel row */
+    .product-long-desc {
+        margin-top: 26px;
+    }
+
+    .product-long-desc .long-desc {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #333;
+        font-family: "Red Hat Display", sans-serif;
+        white-space: pre-wrap;
+        /* keep paragraphs if present */
+    }
+
+    .product-long-desc h3 {
+        font-weight: 800;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
 
         .carousel-container,
@@ -185,18 +242,78 @@
             width: 100%;
         }
     }
+
+    .btn-group-wrapper {
+        display: flex;
+        gap: 10px;
+    }
+
+    .add-to-cart-btn {
+        flex: 1;
+        padding: 12px 25px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    /* Mobile screen adjustment */
+    @media (max-width: 554px) {
+        .btn-group-wrapper {
+            flex-direction: column;
+            /* side by side se stack ho jayega */
+        }
+    }
+
+    .quize-btn {
+
+        margin-bottom: 1rem !important;
+    }
+
+    .quantity-select select {
+
+        width: 73%;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #35b4ad;
+        color: white;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 15px 35px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px #35b4ae82;
+        text-transform: capitalize;
+        letter-spacing: 0.5px;
+    }
+
+    .carousel-container img {
+        max-height: 500px;
+        object-fit: contain;
+        width: auto;
+        display: block;
+    }
+
+    @media (max-width:554px) {
+        .product-detail-wrap {
+            margin-top: 80px;
+        }
+    }
 </style>
 
 @section('content')
     <div class="product-detail-wrap">
         <div class="container">
+
             <div class="product-detail-content">
                 <!-- Left Side: Image Carousel -->
                 <div class="carousel-container">
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             @if ($product->image)
-                                <!-- Main Product Image -->
                                 <div class="carousel-item active">
                                     <img src="{{ Storage::url($product->image) }}" class="d-block w-100"
                                         alt="{{ $product->name }}">
@@ -204,7 +321,6 @@
                             @endif
 
                             @if ($product->gallery && is_array($product->gallery))
-                                <!-- Gallery Images -->
                                 @foreach ($product->gallery as $index => $galleryImage)
                                     <div class="carousel-item {{ !$product->image && $index == 0 ? 'active' : '' }}">
                                         <img src="{{ Storage::url($galleryImage) }}" class="d-block w-100"
@@ -214,7 +330,6 @@
                             @endif
 
                             @if (!$product->image && (!$product->gallery || empty($product->gallery)))
-                                <!-- Fallback Image -->
                                 <div class="carousel-item active">
                                     <img src="{{ asset('assets/imgs/default-product.jpg') }}" class="d-block w-100"
                                         alt="{{ $product->name }}">
@@ -223,7 +338,6 @@
                         </div>
 
                         @if (($product->image ? 1 : 0) + ($product->gallery ? count($product->gallery) : 0) > 1)
-                            <!-- Carousel Controls (only show if more than 1 image) -->
                             <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel"
                                 data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -237,14 +351,12 @@
                         @endif
                     </div>
 
-                    <!-- Thumbnails Below -->
                     @if (($product->image ? 1 : 0) + ($product->gallery ? count($product->gallery) : 0) > 1)
                         <div class="thumbs">
                             @if ($product->image)
                                 <img src="{{ Storage::url($product->image) }}" alt="Main Image"
                                     data-bs-target="#productCarousel" data-bs-slide-to="0" class="active">
                             @endif
-
                             @if ($product->gallery && is_array($product->gallery))
                                 @foreach ($product->gallery as $index => $galleryImage)
                                     <img src="{{ Storage::url($galleryImage) }}" alt="Gallery {{ $index + 1 }}"
@@ -258,28 +370,20 @@
 
                 <!-- Right Side: Product Info -->
                 <div class="product-info">
-                    <!-- Category Tag -->
                     @if ($product->category)
                         <span class="category-tag">{{ $product->category->name }}</span>
                     @endif
 
-                    <!-- Product Name -->
                     <h2>{{ $product->name }}</h2>
 
-                    <!-- Rating (Static for now) -->
                     <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
                         <span>({{ rand(50, 200) }} reviews)</span>
                     </div>
 
-                    <!-- Price -->
-                    <div class="price">AED {{ number_format($product->price, 2) }}</div>
+                    <div class="price">£ {{ number_format($product->price, 2) }}</div>
 
-                    <!-- Stock Information -->
                     @if ($product->quantity > 10)
                         <div class="stock-info in-stock">✅ In Stock ({{ $product->quantity }} available)</div>
                     @elseif($product->quantity > 0)
@@ -288,9 +392,9 @@
                         <div class="stock-info out-of-stock">❌ Out of Stock</div>
                     @endif
 
-                    <!-- Description -->
+                    <!-- SHORT description (first 200 words only) -->
                     <div class="description">
-                        {{ $product->description ?? 'This premium honey product is carefully sourced and processed to maintain its natural qualities and health benefits. Perfect for daily consumption or as a thoughtful gift.' }}
+                        {{ $excerpt !== '' ? $excerpt : 'This premium product is carefully sourced and processed to maintain its natural qualities and benefits.' }}
                         <br><br>
                         <strong>SKU:</strong> {{ $product->sku }}
                         <br><br>
@@ -300,7 +404,6 @@
                         @endif
                     </div>
 
-                    <!-- Quantity Selection -->
                     <div class="quantity-select">
                         <label for="quantity">Quantity:</label>
                         <select id="quantity" name="quantity">
@@ -310,23 +413,41 @@
                         </select>
                     </div>
 
-                    <!-- Add to Cart Button -->
-                    <div class="text-center">
+                    <div class="text-center btn-group-wrapper">
                         @if ($product->quantity > 0)
+                            <!-- Add to Cart Button -->
                             <button class="shop-now-btn quize-btn add-to-cart-btn"
                                 onclick="addToCartFromDetail({{ $product->id }})" id="addToCartBtn">
-                                Add to Cart
-                                <span class="btn-arrow">→</span>
+                                Add to Cart <span class="btn-arrow">→</span>
+                            </button>
+
+                            <!-- Buy Now Button -->
+                            <button class="shop-now-btn quize-btn add-to-cart-btn" onclick="buyNow({{ $product->id }})"
+                                id="buyNowBtn" style="background-color:#50BDB7; color: white;">
+                                Buy Now <span class="btn-arrow">→</span>
                             </button>
                         @else
-                            <button class="shop-now-btn add-to-cart-btn" disabled
+                            <button class="shop-now-btn add-to-cart-btn w-100" disabled
                                 style="background-color: #ccc; cursor: not-allowed;">
                                 Out of Stock
                             </button>
                         @endif
                     </div>
+
+
                 </div>
             </div>
+
+            <!-- LONG description (everything after first 200 words) BELOW the image/carousel -->
+            @if ($remainder !== '')
+                <div class="product-long-desc">
+                    <div class="long-desc">
+                        <h3>More about {{ $product->name }}</h3>
+                        <p>{{ $remainder }}</p>
+                    </div>
+                </div>
+            @endif
+
         </div>
     </div>
 
@@ -342,7 +463,6 @@
                 return;
             }
 
-            // Show loading state
             const originalContent = addToCartBtn.innerHTML;
             addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
             addToCartBtn.disabled = true;
@@ -359,84 +479,103 @@
                         quantity: parseInt(quantity)
                     })
                 })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     if (data.success) {
-                        // Success feedback
                         addToCartBtn.innerHTML = '✅ Added to Cart!';
                         addToCartBtn.style.backgroundColor = '#28a745';
-
-                        // Update cart badge if exists
                         const badge = document.getElementById('cartBadge');
-                        if (badge) {
-                            badge.textContent = data.cart_count;
-                        }
-
-                        // Show success message
+                        if (badge) badge.textContent = data.cart_count;
                         showNotification('Product added to cart successfully!', 'success');
-
-                        // Reset button after 2 seconds
                         setTimeout(() => {
                             addToCartBtn.innerHTML = originalContent;
                             addToCartBtn.style.backgroundColor = '';
                             addToCartBtn.disabled = false;
                         }, 2000);
                     } else {
-                        // Error feedback
                         addToCartBtn.innerHTML = originalContent;
                         addToCartBtn.disabled = false;
                         showNotification(data.message || 'Error adding to cart', 'error');
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
+                .catch(() => {
                     addToCartBtn.innerHTML = originalContent;
                     addToCartBtn.disabled = false;
                     showNotification('Network error occurred', 'error');
                 });
         }
 
-        // Notification function
         function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-                padding: 15px 20px;
-                border-radius: 5px;
-                color: white;
-                font-weight: bold;
+            const n = document.createElement('div');
+            n.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 10000; padding: 15px 20px;
+                border-radius: 5px; color: white; font-weight: bold;
                 background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                animation: slideIn 0.3s ease;
             `;
-            notification.textContent = message;
-
-            document.body.appendChild(notification);
-
+            n.textContent = message;
+            document.body.appendChild(n);
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
+                if (document.body.contains(n)) document.body.removeChild(n);
             }, 3000);
         }
 
-        // Thumbnail click functionality
         document.addEventListener('DOMContentLoaded', function() {
             const thumbnails = document.querySelectorAll('.thumbs img');
-            thumbnails.forEach((thumb, index) => {
+            thumbnails.forEach((thumb) => {
                 thumb.addEventListener('click', function() {
-                    // Remove active class from all thumbnails
                     thumbnails.forEach(t => t.classList.remove('active'));
-                    // Add active class to clicked thumbnail
                     this.classList.add('active');
                 });
             });
         });
+    </script>
+
+    <script>
+        // Buy Now function
+        function buyNow(productId) {
+            const quantity = document.getElementById('quantity').value;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const buyNowBtn = document.getElementById('buyNowBtn');
+
+            if (!csrfToken) {
+                alert('CSRF Token missing!');
+                return;
+            }
+
+            // Loading state
+            const originalContent = buyNowBtn.innerHTML;
+            buyNowBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            buyNowBtn.disabled = true;
+
+            fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: parseInt(quantity)
+                    })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to checkout directly
+                        window.location.href = '/checkout';
+                    } else {
+                        buyNowBtn.innerHTML = originalContent;
+                        buyNowBtn.disabled = false;
+                        showNotification(data.message || 'Error in Buy Now', 'error');
+                    }
+                })
+                .catch(() => {
+                    buyNowBtn.innerHTML = originalContent;
+                    buyNowBtn.disabled = false;
+                    showNotification('Network error occurred', 'error');
+                });
+        }
     </script>
 @endsection

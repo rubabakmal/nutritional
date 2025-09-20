@@ -288,7 +288,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Order Summary */
@@ -419,185 +421,199 @@
             margin-top: 10px;
             display: none;
         }
+
+        .checkout-wrap {
+            margin-top: 130px;
+        }
+
+        @media(max-width:554px) {
+            .checkout-wrap {
+                margin-top: 84px;
+            }
+        }
     </style>
 
-    <div class="checkout-container">
-        <!-- Checkout Form -->
-        <div class="checkout-form">
-            <form id="checkout-form">
-                <!-- Contact Section -->
-                <div class="form-section">
-                    <h2 class="section-title">Contact</h2>
-                    <div class="form-group">
-                        <input type="email" id="email" class="form-input" placeholder="Email address" required>
+    <div class="checkout-wrap">
+        <div class="checkout-container">
+            <!-- Checkout Form -->
+            <div class="checkout-form">
+                <form id="checkout-form">
+                    <!-- Contact Section -->
+                    <div class="form-section">
+                        <h2 class="section-title">Contact</h2>
+                        <div class="form-group">
+                            <input type="email" id="email" class="form-input" placeholder="Email address" required>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="newsletter" class="checkbox" checked>
+                            <label for="newsletter" class="checkbox-label">Email me with news and offers</label>
+                        </div>
                     </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="newsletter" class="checkbox" checked>
-                        <label for="newsletter" class="checkbox-label">Email me with news and offers</label>
-                    </div>
-                </div>
 
-                <!-- Delivery Section -->
-                <div class="form-section">
-                    <h2 class="section-title">Delivery</h2>
-                    <div class="form-group">
-                        <label class="form-label">Country/Region</label>
-                        <select class="form-select" id="country" required>
-                            <option value="AE">United Arab Emirates</option>
-                            <option value="SA">Saudi Arabia</option>
-                            <option value="KW">Kuwait</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
+                    <!-- Delivery Section -->
+                    <div class="form-section">
+                        <h2 class="section-title">Delivery</h2>
                         <div class="form-group">
-                            <input type="text" id="first_name" class="form-input" placeholder="First name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="last_name" class="form-input" placeholder="Last name" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="address" class="form-input" placeholder="Address" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="apartment" class="form-input" placeholder="Apartment, suite, etc. (optional)">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <input type="text" id="city" class="form-input" placeholder="City" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Emirate</label>
-                            <select class="form-select" id="state" required>
-                                <option value="AUH">Abu Dhabi</option>
-                                <option value="DXB">Dubai</option>
-                                <option value="SHJ">Sharjah</option>
-                                <option value="AJM">Ajman</option>
+                            <label class="form-label">Country/Region</label>
+                            <select class="form-select" id="country" required>
+                                <option value="AE">United Arab Emirates</option>
+                                <option value="SA">Saudi Arabia</option>
+                                <option value="KW">Kuwait</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" id="phone" class="form-input" placeholder="Phone" required>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="save-info" class="checkbox">
-                        <label for="save-info" class="checkbox-label">Save this information for next time</label>
-                    </div>
-                </div>
-
-                <!-- Shipping Method -->
-                <div class="form-section">
-                    <h2 class="section-title">Shipping method</h2>
-                    <div class="shipping-option">
-                        <span class="shipping-label">Standard Delivery</span>
-                        <span class="shipping-price">{{ isset($shipping) && $shipping == 0 ? 'FREE' : 'AED ' . number_format($shipping ?? 25, 2) }}</span>
-                    </div>
-                </div>
-
-                <!-- Payment Section -->
-                <div class="form-section">
-                    <h2 class="section-title">Payment</h2>
-
-                    <div class="security-note">
-                        <i class="fas fa-lock"></i>
-                        All transactions are secure and encrypted.
-                    </div>
-
-                    <div class="payment-methods">
-                        <div class="payment-option active" onclick="selectPayment('stripe')">
-                            <input type="radio" name="payment" value="stripe" class="payment-radio" checked>
-                            <span class="payment-label">Credit / Debit Card</span>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="first_name" class="form-input" placeholder="First name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="last_name" class="form-input" placeholder="Last name" required>
+                            </div>
                         </div>
-
-                        <div class="payment-option" onclick="selectPayment('cod')">
-                            <input type="radio" name="payment" value="cod" class="payment-radio">
-                            <span class="payment-label">Cash on Delivery (COD)</span>
+                        <div class="form-group">
+                            <input type="text" id="address" class="form-input" placeholder="Address" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="apartment" class="form-input"
+                                placeholder="Apartment, suite, etc. (optional)">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="city" class="form-input" placeholder="City" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Emirate</label>
+                                <select class="form-select" id="state" required>
+                                    <option value="AUH">Abu Dhabi</option>
+                                    <option value="DXB">Dubai</option>
+                                    <option value="SHJ">Sharjah</option>
+                                    <option value="AJM">Ajman</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" class="form-input" placeholder="Phone" required>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="save-info" class="checkbox">
+                            <label for="save-info" class="checkbox-label">Save this information for next time</label>
                         </div>
                     </div>
 
-                    <!-- Stripe Payment Form -->
-                    <div id="stripe-form" class="payment-form active">
-                        <div id="card-element">
-                            <!-- Stripe Elements will create form elements here -->
+                    <!-- Shipping Method -->
+                    <div class="form-section">
+                        <h2 class="section-title">Shipping method</h2>
+                        <div class="shipping-option">
+                            <span class="shipping-label">Standard Delivery</span>
+                            <span
+                                class="shipping-price">{{ isset($shipping) && $shipping == 0 ? 'FREE' : 'AED ' . number_format($shipping ?? 25, 2) }}</span>
                         </div>
-                        <div id="card-errors" role="alert"></div>
                     </div>
 
-                    <div class="error-message" id="error-message"></div>
-                    <div class="success-message" id="success-message"></div>
+                    <!-- Payment Section -->
+                    <div class="form-section">
+                        <h2 class="section-title">Payment</h2>
 
-                    <button type="submit" id="pay-button" class="pay-button">
-                        <span class="loading-spinner"></span>
-                        <span class="button-text">Pay AED {{ number_format($finalTotal ?? 608, 2) }}</span>
-                    </button>
-                </div>
-            </form>
-        </div>
+                        <div class="security-note">
+                            <i class="fas fa-lock"></i>
+                            All transactions are secure and encrypted.
+                        </div>
 
-        <!-- Order Summary -->
-        <div class="order-summary">
-            <h3 class="summary-title">Order Summary</h3>
+                        <div class="payment-methods">
+                            <div class="payment-option active" onclick="selectPayment('stripe')">
+                                <input type="radio" name="payment" value="stripe" class="payment-radio" checked>
+                                <span class="payment-label">Credit / Debit Card</span>
+                            </div>
 
-            @if(isset($formattedItems))
-                @foreach($formattedItems as $item)
+                            <div class="payment-option" onclick="selectPayment('cod')">
+                                <input type="radio" name="payment" value="cod" class="payment-radio">
+                                <span class="payment-label">Cash on Delivery (COD)</span>
+                            </div>
+                        </div>
+
+                        <!-- Stripe Payment Form -->
+                        <div id="stripe-form" class="payment-form active">
+                            <div id="card-element">
+                                <!-- Stripe Elements will create form elements here -->
+                            </div>
+                            <div id="card-errors" role="alert"></div>
+                        </div>
+
+                        <div class="error-message" id="error-message"></div>
+                        <div class="success-message" id="success-message"></div>
+
+                        <button type="submit" id="pay-button" class="pay-button">
+                            <span class="loading-spinner"></span>
+                            <span class="button-text">Pay AED {{ number_format($finalTotal ?? 608, 2) }}</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h3 class="summary-title">Order Summary</h3>
+
+                @if (isset($formattedItems))
+                    @foreach ($formattedItems as $item)
+                        <div class="order-item">
+                            <div class="item-image">
+                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}"
+                                    onerror="this.src='{{ asset('assets/imgs/default-product.jpg') }}'">
+                            </div>
+                            <div class="item-details">
+                                <div class="item-name">{{ $item['name'] }}</div>
+                                <div class="item-variant">Size: {{ $item['size'] ?? '400g' }}</div>
+                                <div class="item-quantity">Qty: {{ $item['quantity'] }}</div>
+                            </div>
+                            <div class="item-price">AED {{ number_format($item['total'], 2) }}</div>
+                        </div>
+                    @endforeach
+                @else
+                    <!-- Fallback hardcoded items -->
                     <div class="order-item">
                         <div class="item-image">
-                            <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}"
-                                 onerror="this.src='{{ asset('assets/imgs/default-product.jpg') }}'">
+                            <img src="{{ asset('assets/imgs/balkees-img1.webp') }}" alt="Lemon Zest & Ginger Fusion">
                         </div>
                         <div class="item-details">
-                            <div class="item-name">{{ $item['name'] }}</div>
-                            <div class="item-variant">Size: {{ $item['size'] ?? '400g' }}</div>
-                            <div class="item-quantity">Qty: {{ $item['quantity'] }}</div>
+                            <div class="item-name">Lemon Zest & Ginger Fusion</div>
+                            <div class="item-variant">Size: 400g</div>
+                            <div class="item-quantity">Qty: 1</div>
                         </div>
-                        <div class="item-price">AED {{ number_format($item['total'], 2) }}</div>
+                        <div class="item-price">AED 304.00</div>
                     </div>
-                @endforeach
-            @else
-                <!-- Fallback hardcoded items -->
-                <div class="order-item">
-                    <div class="item-image">
-                        <img src="{{ asset('assets/imgs/balkees-img1.webp') }}" alt="Lemon Zest & Ginger Fusion">
+
+                    <div class="order-item">
+                        <div class="item-image">
+                            <img src="{{ asset('assets/imgs/balkees-img2.webp') }}" alt="Cinnamon & Sesame Seed Fusion">
+                        </div>
+                        <div class="item-details">
+                            <div class="item-name">Cinnamon & Sesame Seed Fusion</div>
+                            <div class="item-variant">Size: 400g</div>
+                            <div class="item-quantity">Qty: 1</div>
+                        </div>
+                        <div class="item-price">AED 304.00</div>
                     </div>
-                    <div class="item-details">
-                        <div class="item-name">Lemon Zest & Ginger Fusion</div>
-                        <div class="item-variant">Size: 400g</div>
-                        <div class="item-quantity">Qty: 1</div>
-                    </div>
-                    <div class="item-price">AED 304.00</div>
+                @endif
+
+                <div class="summary-row">
+                    <span>Subtotal ({{ $cartCount ?? 2 }} item{{ ($cartCount ?? 2) != 1 ? 's' : '' }})</span>
+                    <span>AED {{ number_format($subtotal ?? 608, 2) }}</span>
                 </div>
 
-                <div class="order-item">
-                    <div class="item-image">
-                        <img src="{{ asset('assets/imgs/balkees-img2.webp') }}" alt="Cinnamon & Sesame Seed Fusion">
-                    </div>
-                    <div class="item-details">
-                        <div class="item-name">Cinnamon & Sesame Seed Fusion</div>
-                        <div class="item-variant">Size: 400g</div>
-                        <div class="item-quantity">Qty: 1</div>
-                    </div>
-                    <div class="item-price">AED 304.00</div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>{{ isset($shipping) && $shipping == 0 ? 'FREE' : 'AED ' . number_format($shipping ?? 25, 2) }}</span>
                 </div>
-            @endif
 
-            <div class="summary-row">
-                <span>Subtotal ({{ $cartCount ?? 2 }} item{{ ($cartCount ?? 2) != 1 ? 's' : '' }})</span>
-                <span>AED {{ number_format($subtotal ?? 608, 2) }}</span>
-            </div>
+                <div class="summary-row">
+                    <span>Tax (5%)</span>
+                    <span>AED {{ number_format($tax ?? 30.4, 2) }}</span>
+                </div>
 
-            <div class="summary-row">
-                <span>Shipping</span>
-                <span>{{ isset($shipping) && $shipping == 0 ? 'FREE' : 'AED ' . number_format($shipping ?? 25, 2) }}</span>
-            </div>
-
-            <div class="summary-row">
-                <span>Tax (5%)</span>
-                <span>AED {{ number_format($tax ?? 30.4, 2) }}</span>
-            </div>
-
-            <div class="summary-row total">
-                <span>Total</span>
-                <span>AED {{ number_format($finalTotal ?? 663.4, 2) }}</span>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>AED {{ number_format($finalTotal ?? 663.4, 2) }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -628,7 +644,9 @@
         cardElement.mount('#card-element');
 
         // Handle real-time validation errors from the card Element
-        cardElement.on('change', ({error}) => {
+        cardElement.on('change', ({
+            error
+        }) => {
             const displayError = document.getElementById('card-errors');
             if (error) {
                 displayError.textContent = error.message;
@@ -700,22 +718,30 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
                     },
                 });
 
-                const { client_secret, error } = await response.json();
+                const {
+                    client_secret,
+                    error
+                } = await response.json();
 
                 if (error) {
                     throw new Error(error);
                 }
 
                 // Confirm payment with Stripe
-                const {error: stripeError, paymentIntent} = await stripe.confirmCardPayment(client_secret, {
+                const {
+                    error: stripeError,
+                    paymentIntent
+                } = await stripe.confirmCardPayment(client_secret, {
                     payment_method: {
                         card: cardElement,
                         billing_details: {
-                            name: document.getElementById('first_name').value + ' ' + document.getElementById('last_name').value,
+                            name: document.getElementById('first_name').value + ' ' + document
+                                .getElementById('last_name').value,
                             email: document.getElementById('email').value,
                             phone: document.getElementById('phone').value,
                             address: {
@@ -807,35 +833,35 @@
 
             // Process COD order
             fetch('{{ route('cod.process') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showSuccessMessage('Order placed successfully! You will pay upon delivery.');
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessMessage('Order placed successfully! You will pay upon delivery.');
 
-                    // Redirect to success page
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url;
-                    }, 1500);
-                } else {
-                    throw new Error(data.message || 'Error processing order');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showErrorMessage(error.message || 'Error processing your order');
-            })
-            .finally(() => {
-                // Re-enable button
-                payButton.disabled = false;
-                payButton.classList.remove('loading');
-                buttonText.textContent = 'Place Order';
-            });
+                        // Redirect to success page
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url;
+                        }, 1500);
+                    } else {
+                        throw new Error(data.message || 'Error processing order');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showErrorMessage(error.message || 'Error processing your order');
+                })
+                .finally(() => {
+                    // Re-enable button
+                    payButton.disabled = false;
+                    payButton.classList.remove('loading');
+                    buttonText.textContent = 'Place Order';
+                });
         }
 
         function showErrorMessage(message) {
